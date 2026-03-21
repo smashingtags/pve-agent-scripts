@@ -16,7 +16,7 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 - All Proxmox API calls (`pct create`, `pct set`, etc.)
 - All apt/package installation logic
 - All install scripts (`install/*.sh`)
-- Upstream compatibility — can merge changes from community-scripts
+- Upstream compatibility — can merge changes from community-scripts**Compatibility:**- 465 CT scripts — all use the same source pattern, all work with pve-agent- 391/455 install scripts fully non-interactive — work perfectly- 57 install scripts have YES/NO prompts — auto-declined (defaults to No)- 35 install scripts have version/config prompts — use defaults when available- Tested: Docker, AdGuard Home, Nginx Proxy Manager — all FULL SUCCESS on Proxmox 8
 
 ## Quick Start
 
