@@ -112,7 +112,14 @@ This parses all `ct/*.sh` scripts and regenerates:
 
 - **[tteck](https://github.com/tteck)** (RIP) — Original creator of Proxmox VE Helper Scripts
 - **[community-scripts](https://github.com/community-scripts/ProxmoxVE)** — Community maintainers
-- **Imogen Labs** — Agent Edition fork maintainer
+- **[Imogen Labs](https://agents.imogenlabs.ai)** — Agent Edition fork maintainer
+
+## Related
+
+- **[OpenClaw Agent Templates](https://agents.imogenlabs.ai/#templates)** — Pre-built AI agent configs ($19-49) for monitoring, crypto, news, security, and more
+- **[The Imogen Playbook](https://agents.imogenlabs.ai/#templates)** — How to build an AI operator from scratch ($149)
+- **[Managed OpenClaw Hosting](https://agents.imogenlabs.ai/#pricing)** — Dedicated AI agent hosting ($29-89/mo)
+- **[@imogenlabs/operator-kit](https://www.npmjs.com/package/@imogenlabs/operator-kit)** — Free OpenClaw operator scaffold (npm)
 
 ## License
 
