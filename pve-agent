@@ -1,0 +1,360 @@
+#!/usr/bin/env python3
+"""
+pve-agent — CLI for Proxmox VE Community Scripts (Agent Edition)
+
+Commands:
+    list                    List all available apps (JSON)
+    info <app>              Show app details
+    search <keyword>        Search apps by name, tag, or OS
+    create <app> [opts]     Create an LXC container
+    update <app> --ctid N   Run update script on a container
+    catalog                 Show catalog stats
+
+Designed for AI agents and automation. No interactive prompts.
+
+Author: Imogen Labs
+License: MIT
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+CATALOG_FILE = SCRIPT_DIR / "catalog.json"
+CT_DIR = SCRIPT_DIR / "ct"
+AGENT_BUILD_FUNC = SCRIPT_DIR / "misc" / "agent-build.func"
+
+
+def load_catalog() -> dict:
+    if not CATALOG_FILE.exists():
+        print("ERROR: catalog.json not found. Run: python3 tools/convert.py", file=sys.stderr)
+        sys.exit(1)
+    with open(CATALOG_FILE) as f:
+        return json.load(f)
+
+
+def find_app(catalog, name):
+    """Find an app by name (case-insensitive, partial match)."""
+    name_lower = name.lower().replace("-", "").replace("_", "").replace(" ", "")
+    # Exact match first
+    for app in catalog["apps"]:
+        app_normalized = app["app"].lower().replace("-", "").replace("_", "").replace(" ", "")
+        if app_normalized == name_lower:
+            return app
+    # File stem match
+    for app in catalog["apps"]:
+        stem = app["file"].replace(".sh", "").lower().replace("-", "").replace("_", "")
+        if stem == name_lower:
+            return app
+    # Partial match
+    for app in catalog["apps"]:
+        if name_lower in app["app"].lower().replace(" ", ""):
+            return app
+    return None
+
+
+def cmd_list(args, catalog):
+    """List all available apps."""
+    apps = catalog["apps"]
+
+    if args.format == "json":
+        output = [{
+            "name": a["app"],
+            "file": a["file"],
+            "cpu": a["cpu"],
+            "ram": a["ram"],
+            "disk": a["disk"],
+            "os": a["os"],
+            "tags": a["tags"],
+        } for a in apps]
+        print(json.dumps(output, indent=2))
+    else:
+        print(f"{'Name':<30} {'CPU':>4} {'RAM':>6} {'Disk':>5} {'OS':<10} {'Tags'}")
+        print("-" * 85)
+        for a in apps:
+            tags = ";".join(a["tags"]) if a["tags"] else ""
+            print(f"{a['app']:<30} {a['cpu']:>4} {a['ram']:>5}M {a['disk']:>4}G {a['os']:<10} {tags}")
+        print(f"\nTotal: {len(apps)} apps")
+
+
+def cmd_info(args, catalog):
+    """Show detailed info about an app."""
+    app = find_app(catalog, args.app)
+    if not app:
+        print(f"ERROR: App '{args.app}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    if args.format == "json":
+        print(json.dumps(app, indent=2))
+    else:
+        print(f"App:            {app['app']}")
+        print(f"Script:         ct/{app['file']}")
+        print(f"Install:        {app.get('install_script', 'N/A')}")
+        print(f"CPU:            {app['cpu']} cores")
+        print(f"RAM:            {app['ram']} MB")
+        print(f"Disk:           {app['disk']} GB")
+        print(f"OS:             {app['os']} {app['version']}")
+        print(f"Unprivileged:   {'yes' if app['unprivileged'] else 'no'}")
+        print(f"GPU:            {'yes' if app['gpu'] else 'no'}")
+        print(f"Tags:           {';'.join(app['tags']) if app['tags'] else 'none'}")
+        print(f"Source:         {app.get('source_url', 'N/A')}")
+        print(f"Author:         {app.get('author', 'N/A')}")
+        print(f"Has Update:     {'yes' if app['has_update_script'] else 'no'}")
+
+
+def cmd_search(args, catalog):
+    """Search apps by keyword."""
+    query = args.keyword.lower()
+    results = []
+
+    for app in catalog["apps"]:
+        searchable = " ".join([
+            app["app"].lower(),
+            " ".join(app["tags"]),
+            app["os"],
+            app.get("source_url") or "",
+            app.get("author") or "",
+        ])
+        if query in searchable:
+            results.append(app)
+
+    if args.format == "json":
+        print(json.dumps([{
+            "name": a["app"],
+            "file": a["file"],
+            "tags": a["tags"],
+            "os": a["os"],
+        } for a in results], indent=2))
+    else:
+        if not results:
+            print(f"No apps found matching '{args.keyword}'")
+            return
+        print(f"Found {len(results)} apps matching '{args.keyword}':\n")
+        for a in results:
+            tags = ";".join(a["tags"]) if a["tags"] else ""
+            print(f"  {a['app']:<30} [{a['os']}] {tags}")
+
+
+def cmd_create(args, catalog):
+    """Create a container."""
+    app = find_app(catalog, args.app)
+    if not app:
+        print(f"ERROR: App '{args.app}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    ct_script = CT_DIR / app["file"]
+    if not ct_script.exists():
+        print(f"ERROR: Script not found: {ct_script}", file=sys.stderr)
+        sys.exit(1)
+
+    # Build environment with overrides
+    env = os.environ.copy()
+    if args.cpu:
+        env["PVE_CPU"] = str(args.cpu)
+    if args.ram:
+        env["PVE_RAM"] = str(args.ram)
+    if args.disk:
+        env["PVE_DISK"] = str(args.disk)
+    if args.id:
+        env["PVE_CTID"] = str(args.id)
+    if args.hostname:
+        env["PVE_HOSTNAME"] = args.hostname
+    if args.bridge:
+        env["PVE_BRIDGE"] = args.bridge
+    if args.net:
+        env["PVE_NET"] = args.net
+    if args.gateway:
+        env["PVE_GATEWAY"] = args.gateway
+    if args.password:
+        env["PVE_PASSWORD"] = args.password
+    if args.ssh_key:
+        env["PVE_SSH"] = "yes"
+        env["PVE_SSH_KEY"] = args.ssh_key
+    if args.storage:
+        env["PVE_STORAGE"] = args.storage
+    if args.json:
+        env["PVE_JSON"] = "1"
+    if args.dry_run:
+        env["PVE_DRY_RUN"] = "1"
+    if args.verbose:
+        env["PVE_VERBOSE"] = "yes"
+
+    # Patch the script to use agent-build.func instead of upstream build.func
+    # We use a bash wrapper that sources agent-build.func then runs the script body
+    agent_func = str(AGENT_BUILD_FUNC)
+
+    wrapper = (
+        '#!/usr/bin/env bash\n'
+        f'source "{agent_func}"\n'
+        '# Now source the CT script, but skip its first line (the upstream source)\n'
+        f'eval "$(tail -n +2 "{ct_script}")"\n'
+    )
+
+    print(f"{'DRY RUN: ' if args.dry_run else ''}Creating {app['app']} container...", file=sys.stderr)
+
+    result = subprocess.run(
+        ["bash", "-c", wrapper],
+        env=env,
+        capture_output=not args.verbose,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        if not args.verbose and result.stderr:
+            print(result.stderr, file=sys.stderr)
+        sys.exit(1)
+
+    if args.verbose and result.stdout:
+        print(result.stdout)
+
+
+def cmd_update(args, catalog):
+    """Run update script on a container."""
+    app = find_app(catalog, args.app)
+    if not app:
+        print(f"ERROR: App '{args.app}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    if not app["has_update_script"]:
+        print(f"ERROR: {app['app']} does not have an update script", file=sys.stderr)
+        sys.exit(1)
+
+    if not args.ctid:
+        print("ERROR: --ctid is required for update", file=sys.stderr)
+        sys.exit(2)
+
+    ct_script = CT_DIR / app["file"]
+    agent_func = str(AGENT_BUILD_FUNC)
+
+    env = os.environ.copy()
+    env["PVE_VERBOSE"] = "yes" if args.verbose else "no"
+    if args.json:
+        env["PVE_JSON"] = "1"
+
+    # For updates, we run inside the container
+    # Push the script and execute it
+    wrapper = (
+        '#!/usr/bin/env bash\n'
+        f'source "{agent_func}"\n'
+        f'eval "$(tail -n +2 "{ct_script}")"\n'
+    )
+
+    print(f"Updating {app['app']} on CT {args.ctid}...", file=sys.stderr)
+
+    result = subprocess.run(
+        ["pct", "exec", str(args.ctid), "--", "bash", "-c", wrapper],
+        env=env,
+        capture_output=not args.verbose,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        if not args.verbose and result.stderr:
+            print(result.stderr, file=sys.stderr)
+        sys.exit(1)
+
+
+def cmd_catalog_stats(args, catalog):
+    """Show catalog statistics."""
+    apps = catalog["apps"]
+    os_counts = {}
+    tag_counts = {}
+    for a in apps:
+        os_counts[a["os"]] = os_counts.get(a["os"], 0) + 1
+        for t in a["tags"]:
+            tag_counts[t] = tag_counts.get(t, 0) + 1
+
+    stats = {
+        "total_apps": len(apps),
+        "with_gpu": sum(1 for a in apps if a["gpu"]),
+        "with_update": sum(1 for a in apps if a["has_update_script"]),
+        "with_install_script": sum(1 for a in apps if a.get("install_script")),
+        "os_distribution": dict(sorted(os_counts.items(), key=lambda x: -x[1])),
+        "top_tags": dict(sorted(tag_counts.items(), key=lambda x: -x[1])[:20]),
+    }
+
+    if args.format == "json":
+        print(json.dumps(stats, indent=2))
+    else:
+        print(f"Total apps:           {stats['total_apps']}")
+        print(f"With GPU support:     {stats['with_gpu']}")
+        print(f"With update script:   {stats['with_update']}")
+        print(f"With install script:  {stats['with_install_script']}")
+        print(f"\nOS Distribution:")
+        for os_name, count in stats["os_distribution"].items():
+            print(f"  {os_name:<15} {count}")
+        print(f"\nTop Tags:")
+        for tag, count in stats["top_tags"].items():
+            print(f"  {tag:<20} {count}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="pve-agent",
+        description="Proxmox VE Community Scripts — Agent Edition CLI",
+    )
+    parser.add_argument("--format", choices=["json", "table"], default="table",
+                        help="Output format (default: table)")
+    parser.add_argument("--json", action="store_true", help="Shorthand for --format json")
+
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # list
+    p_list = subparsers.add_parser("list", help="List all available apps")
+    p_list.set_defaults(func=cmd_list)
+
+    # info
+    p_info = subparsers.add_parser("info", help="Show app details")
+    p_info.add_argument("app", help="App name")
+    p_info.set_defaults(func=cmd_info)
+
+    # search
+    p_search = subparsers.add_parser("search", help="Search apps")
+    p_search.add_argument("keyword", help="Search keyword")
+    p_search.set_defaults(func=cmd_search)
+
+    # create
+    p_create = subparsers.add_parser("create", help="Create LXC container")
+    p_create.add_argument("app", help="App name")
+    p_create.add_argument("--cpu", type=int, help="CPU cores")
+    p_create.add_argument("--ram", type=int, help="RAM in MB")
+    p_create.add_argument("--disk", type=int, help="Disk in GB")
+    p_create.add_argument("--id", type=int, help="Container ID")
+    p_create.add_argument("--hostname", help="Container hostname")
+    p_create.add_argument("--bridge", help="Network bridge")
+    p_create.add_argument("--net", help="Network config (CIDR or dhcp)")
+    p_create.add_argument("--gateway", help="Gateway IP")
+    p_create.add_argument("--password", help="Root password")
+    p_create.add_argument("--ssh-key", help="SSH authorized key")
+    p_create.add_argument("--storage", help="Container storage")
+    p_create.add_argument("--dry-run", action="store_true", help="Show what would be done")
+    p_create.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    p_create.set_defaults(func=cmd_create)
+
+    # update
+    p_update = subparsers.add_parser("update", help="Update app in container")
+    p_update.add_argument("app", help="App name")
+    p_update.add_argument("--ctid", type=int, required=True, help="Container ID")
+    p_update.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    p_update.set_defaults(func=cmd_update)
+
+    # catalog
+    p_catalog = subparsers.add_parser("catalog", help="Show catalog statistics")
+    p_catalog.set_defaults(func=cmd_catalog_stats)
+
+    args = parser.parse_args()
+
+    # Handle --json shorthand
+    if args.json:
+        args.format = "json"
+
+    catalog = load_catalog()
+    args.func(args, catalog)
+
+
+if __name__ == "__main__":
+    main()
