@@ -190,8 +190,8 @@ def cmd_create(args, catalog):
     wrapper = (
         '#!/usr/bin/env bash\n'
         f'source "{agent_func}"\n'
-        '# Now source the CT script, but skip its first line (the upstream source)\n'
-        f'eval "$(tail -n +2 "{ct_script}")"\n'
+        '# Skip shebang (line 1) and upstream source (line 2), run the rest\n'
+        f'eval "$(tail -n +3 "{ct_script}")"\n'
     )
 
     print(f"{'DRY RUN: ' if args.dry_run else ''}Creating {app['app']} container...", file=sys.stderr)
