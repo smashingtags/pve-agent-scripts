@@ -9,7 +9,7 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 **What changed:**
 - `misc/agent-build.func` replaces `build.func` — zero whiptail/dialog calls
 - `pve-agent` CLI provides structured JSON output for agent consumption
-- `catalog.json` is a machine-readable index of all 464+ apps
+- `catalog.json` is a machine-readable index of all 509 apps
 - All `install/*.sh` scripts remain **untouched** — the actual app logic works as-is
 
 **What stayed the same:**
@@ -65,7 +65,7 @@ Instead of interactive prompts, configure via environment:
 | `PVE_VLAN` | VLAN tag | - |
 | `PVE_MTU` | MTU | - |
 | `PVE_MAC` | MAC address | - |
-| `PVE_PASSWORD` | Root password | - |
+| `PVE_PASSWORD` | Root password (auto-generates random 16-char if not set) | Auto |
 | `PVE_SSH` | Enable SSH (yes/no) | no |
 | `PVE_SSH_KEY` | SSH authorized key | - |
 | `PVE_GPU` | GPU passthrough (yes/no) | no |
@@ -116,11 +116,13 @@ This parses all `ct/*.sh` scripts and regenerates:
 - `misc/agent-build.func` — non-interactive build functions
 - `pve-agent` — CLI wrapper
 
+**Warning:** `convert.py` overwrites `pve-agent` and `misc/agent-build.func` on every run. Edit `tools/convert.py` if you need to change them — direct edits will be lost on next regeneration.
+
 ## Credits
 
 - **[tteck](https://github.com/tteck)** (RIP) — Original creator of Proxmox VE Helper Scripts
 - **[community-scripts](https://github.com/community-scripts/ProxmoxVE)** — Community maintainers
-- **Imogen Labs** — Agent Edition fork maintainer
+- **[Eight.ly](https://eight.ly)** — Agent Edition fork maintainer
 
 ## License
 
