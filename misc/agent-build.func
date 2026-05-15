@@ -74,6 +74,7 @@ color() { :; }
 echo_default() { :; }
 exit_script() { exit 0; }
 msg_menu() { :; }
+clear() { :; }
 
 # Color variables (set to empty — no ANSI in agent mode)
 RD="" GN="" BL="" YW="" CL="" BOLD="" TAB="" CM="" CROSS=""
@@ -179,6 +180,14 @@ else
     fi
   fi
 fi
+
+# Re-apply no-ops after core.func (it redefines header_info, color, exit_script, etc.)
+header_info() { :; }
+color() { :; }
+echo_default() { :; }
+exit_script() { exit 0; }
+msg_menu() { :; }
+clear() { :; }
 
 catch_errors() {
   set -Eeuo pipefail
@@ -500,19 +509,18 @@ DRYEOF
 
   # --- Actual container creation (all Proxmox API calls preserved) ---
 
-  NET_STRING="-net0 name=eth0,bridge=${BRG:-vmbr0}"
-
-  [[ -n "${MAC:-}" ]] && case "$MAC" in ,hwaddr=*) NET_STRING+="$MAC" ;; *) NET_STRING+=",hwaddr=$MAC" ;; esac
-  NET_STRING+=",ip=${NET:-dhcp}"
-  [[ -n "${GATE:-}" ]] && case "$GATE" in ,gw=*) NET_STRING+="$GATE" ;; *) NET_STRING+=",gw=$GATE" ;; esac
-  [[ -n "${VLAN:-}" ]] && case "$VLAN" in ,tag=*) NET_STRING+="$VLAN" ;; *) NET_STRING+=",tag=$VLAN" ;; esac
-  [[ -n "${MTU:-}" ]] && case "$MTU" in ,mtu=*) NET_STRING+="$MTU" ;; *) NET_STRING+=",mtu=$MTU" ;; esac
+  NET_VALUE="name=eth0,bridge=${BRG:-vmbr0}"
+  [[ -n "${MAC:-}" ]] && NET_VALUE+=",hwaddr=$MAC"
+  NET_VALUE+=",ip=${NET:-dhcp}"
+  [[ -n "${GATE:-}" ]] && NET_VALUE+=",gw=$GATE"
+  [[ -n "${VLAN:-}" ]] && NET_VALUE+=",tag=$VLAN"
+  [[ -n "${MTU:-}" ]] && NET_VALUE+=",mtu=$MTU"
 
   # IPv6
   case "${IPV6_METHOD:-none}" in
-    auto) NET_STRING+=",ip6=auto" ;;
-    dhcp) NET_STRING+=",ip6=dhcp" ;;
-    static) NET_STRING+=",ip6=$IPV6_ADDR"; [[ -n "${IPV6_GATE:-}" ]] && NET_STRING+=",gw6=$IPV6_GATE" ;;
+    auto) NET_VALUE+=",ip6=auto" ;;
+    dhcp) NET_VALUE+=",ip6=dhcp" ;;
+    static) [[ -n "${IPV6_ADDR:-}" ]] && NET_VALUE+=",ip6=$IPV6_ADDR"; [[ -n "${IPV6_GATE:-}" ]] && NET_VALUE+=",gw6=$IPV6_GATE" ;;
   esac
 
   # Features
@@ -591,12 +599,16 @@ DRYEOF
       -memory "$RAM_SIZE"
       -rootfs "${CONTAINER_STORAGE}:${DISK_SIZE}"
       -ostype "$var_os"
-      "$NET_STRING"
+      -net0 "$NET_VALUE"
     )
 
     [[ -n "$FEATURES" ]] && PCT_OPTIONS+=(-features "$FEATURES")
     [[ "$CT_TYPE" == "1" ]] && PCT_OPTIONS+=(-unprivileged 1)
-    [[ -n "$PW" ]] && PCT_OPTIONS+=($PW)
+    if [[ -n "$PW" ]]; then
+      local _pw_val="${PW#--password }"
+      _pw_val="${_pw_val#-password }"
+      PCT_OPTIONS+=(-password "$_pw_val")
+    fi
 
     if ! pct create "$CT_ID" "${TEMPLATE_STORAGE}:vztmpl/${TEMPLATE}" "${PCT_OPTIONS[@]}" >>"$BUILD_LOG" 2>&1; then
       msg_error "Failed to create container. See $BUILD_LOG"
@@ -627,8 +639,8 @@ DRYEOF
 # --- Description (from build.func, kept intact) -------------------------------
 
 description() {
+  CTID="${CT_ID:-${CTID:-}}"
   IP=$(pct exec "$CTID" ip a s dev eth0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1 || echo "unknown")
-  CTID="$CT_ID"
 
   DESCRIPTION="<div align='center'><h2>${APP} LXC</h2><p>Created by pve-agent (Agent Edition)</p></div>"
   pct set "$CTID" -description "$DESCRIPTION" 2>/dev/null || true
