@@ -22,8 +22,6 @@ catch_errors
 
 function update_script() {
   header_info
-  check_container_storage
-  check_container_resources
   if [[ ! -d /opt/wakapi ]]; then
     msg_error "No ${APP} Installation Found!"
     exit
@@ -44,12 +42,10 @@ function update_script() {
     cp /opt/wakapi/config.yml /opt/wakapi/wakapi_db.db /opt/wakapi-backup/
     msg_ok "Created backup"
 
-    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "wakapi" "muety/wakapi" "tarball"
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "wakapi" "muety/wakapi" "prebuild" "latest" "/opt/wakapi" "wakapi_linux_amd64.zip"
 
     msg_info "Configuring Wakapi"
     cd /opt/wakapi
-    $STD go mod download
-    $STD go build -o wakapi
     cp /opt/wakapi-backup/config.yml /opt/wakapi/
     cp /opt/wakapi-backup/wakapi_db.db /opt/wakapi/
     rm -rf /opt/wakapi-backup

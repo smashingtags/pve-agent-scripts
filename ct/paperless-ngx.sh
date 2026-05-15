@@ -164,6 +164,8 @@ function update_script() {
       fi
     fi
 
+    setup_nltk "snowball_data stopwords punkt_tab" "/usr/share/nltk_data"
+
     msg_info "Starting all Paperless-ngx Services"
     systemctl start paperless-consumer paperless-webserver paperless-scheduler paperless-task-queue
     sleep 1

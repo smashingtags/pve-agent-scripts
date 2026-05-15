@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated_by": "tools/convert.py",
-  "app_count": 464,
+  "app_count": 509,
   "apps": [
     {
       "file": "2fauth.sh",
@@ -131,6 +131,25 @@
       "author": "Slavi\u0161a Are\u017eina (tremor021)",
       "has_update_script": true,
       "install_script": "install/alpine-bitmagnet-install.sh"
+    },
+    {
+      "file": "alpine-borgbackup-server.sh",
+      "app": "Alpine-BorgBackup-Server",
+      "tags": [
+        "alpine",
+        "backup"
+      ],
+      "cpu": 2,
+      "ram": 1024,
+      "disk": 20,
+      "os": "alpine",
+      "version": "3.23",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://www.borgbackup.org/",
+      "author": "Sander Koenders (sanderkoenders)",
+      "has_update_script": true,
+      "install_script": "install/alpine-borgbackup-server-install.sh"
     },
     {
       "file": "alpine-caddy.sh",
@@ -263,6 +282,26 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/alpine-grafana-install.sh"
+    },
+    {
+      "file": "alpine-ironclaw.sh",
+      "app": "Alpine-IronClaw",
+      "tags": [
+        "ai",
+        "agent",
+        "alpine"
+      ],
+      "cpu": 1,
+      "ram": 1024,
+      "disk": 8,
+      "os": "alpine",
+      "version": "3.23",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/nearai/ironclaw",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/alpine-ironclaw-install.sh"
     },
     {
       "file": "alpine-it-tools.sh",
@@ -760,6 +799,26 @@
       "install_script": "install/ampache-install.sh"
     },
     {
+      "file": "anchor.sh",
+      "app": "Anchor",
+      "tags": [
+        "notes",
+        "productivity",
+        "sync"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 10,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/ZhFahim/anchor",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/anchor-install.sh"
+    },
+    {
       "file": "anytype-server.sh",
       "app": "Anytype-Server",
       "tags": [
@@ -870,6 +929,24 @@
       "author": "MickLesk (Canbiz)",
       "has_update_script": true,
       "install_script": "install/apache-tomcat-install.sh"
+    },
+    {
+      "file": "apprise-api.sh",
+      "app": "Apprise-API",
+      "tags": [
+        "notification"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 2,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/caronc/apprise-api",
+      "author": "SystemIdleProcess",
+      "has_update_script": true,
+      "install_script": "install/apprise-api-install.sh"
     },
     {
       "file": "apt-cacher-ng.sh",
@@ -1001,6 +1078,24 @@
       "install_script": "install/authelia-install.sh"
     },
     {
+      "file": "authentik.sh",
+      "app": "authentik",
+      "tags": [
+        "auth"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 16,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/goauthentik/authentik",
+      "author": "Thieneret",
+      "has_update_script": true,
+      "install_script": "install/authentik-install.sh"
+    },
+    {
       "file": "autobrr.sh",
       "app": "Autobrr",
       "tags": [
@@ -1089,6 +1184,25 @@
       "author": "bvdberg01",
       "has_update_script": true,
       "install_script": "install/baikal-install.sh"
+    },
+    {
+      "file": "bambuddy.sh",
+      "app": "Bambuddy",
+      "tags": [
+        "media",
+        "3d-printing"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 10,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/maziggy/bambuddy",
+      "author": "Adrian-RDA",
+      "has_update_script": true,
+      "install_script": "install/bambuddy-install.sh"
     },
     {
       "file": "bar-assistant.sh",
@@ -1183,6 +1297,26 @@
       "install_script": "install/bichon-install.sh"
     },
     {
+      "file": "birdnet-go.sh",
+      "app": "BirdNET-Go",
+      "tags": [
+        "monitoring",
+        "ai",
+        "nature"
+      ],
+      "cpu": 4,
+      "ram": 2048,
+      "disk": 12,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/tphakala/birdnet-go",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/birdnet-go-install.sh"
+    },
+    {
       "file": "bitmagnet.sh",
       "app": "Bitmagnet",
       "tags": [
@@ -1217,25 +1351,6 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/blocky-install.sh"
-    },
-    {
-      "file": "booklore.sh",
-      "app": "BookLore",
-      "tags": [
-        "books",
-        "library"
-      ],
-      "cpu": 3,
-      "ram": 3072,
-      "disk": 7,
-      "os": "debian",
-      "version": "13",
-      "unprivileged": true,
-      "gpu": false,
-      "source_url": "https://github.com/booklore-app/BookLore",
-      "author": "MickLesk (CanbiZ)",
-      "has_update_script": true,
-      "install_script": "install/booklore-install.sh"
     },
     {
       "file": "bookstack.sh",
@@ -1430,7 +1545,7 @@
       "ram": 2048,
       "disk": 6,
       "os": "debian",
-      "version": "12",
+      "version": "13",
       "unprivileged": true,
       "gpu": false,
       "source_url": "https://checkmk.com/",
@@ -1455,6 +1570,25 @@
       "author": "Lucas Zampieri (zampierilucas) | MickLesk (CanbiZ)",
       "has_update_script": true,
       "install_script": "install/cleanuparr-install.sh"
+    },
+    {
+      "file": "cliproxyapi.sh",
+      "app": "CLIProxyAPI",
+      "tags": [
+        "ai",
+        "proxy"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 2,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/router-for-me/CLIProxyAPI",
+      "author": "mathiasnagler",
+      "has_update_script": true,
+      "install_script": "install/cliproxyapi-install.sh"
     },
     {
       "file": "cloudflare-ddns.sh",
@@ -1620,6 +1754,25 @@
       "install_script": null
     },
     {
+      "file": "coredns.sh",
+      "app": "CoreDNS",
+      "tags": [
+        "dns",
+        "network"
+      ],
+      "cpu": 1,
+      "ram": 256,
+      "disk": 1,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/coredns/coredns",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/coredns-install.sh"
+    },
+    {
       "file": "cosmos.sh",
       "app": "Cosmos",
       "tags": [
@@ -1712,22 +1865,42 @@
       "install_script": "install/cryptpad-install.sh"
     },
     {
-      "file": "daemonsync.sh",
-      "app": "Daemon Sync",
+      "file": "dagu.sh",
+      "app": "Dagu",
       "tags": [
-        "sync"
+        "automation",
+        "workflow",
+        "scheduler"
       ],
       "cpu": 1,
       "ram": 512,
-      "disk": 8,
+      "disk": 4,
       "os": "debian",
       "version": "13",
       "unprivileged": true,
       "gpu": false,
-      "source_url": "https://daemonsync.me/",
-      "author": "tteck (tteckster)",
+      "source_url": "https://dagu.sh/",
+      "author": "MickLesk (CanbiZ)",
       "has_update_script": true,
-      "install_script": "install/daemonsync-install.sh"
+      "install_script": "install/dagu-install.sh"
+    },
+    {
+      "file": "dashy.sh",
+      "app": "Dashy",
+      "tags": [
+        "dashboard"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 6,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://dashy.to/",
+      "author": "tteck (tteckster) | Co-Author: CrazyWolf13",
+      "has_update_script": true,
+      "install_script": "install/dashy-install.sh"
     },
     {
       "file": "databasus.sh",
@@ -1933,6 +2106,26 @@
       "install_script": "install/docmost-install.sh"
     },
     {
+      "file": "docuseal.sh",
+      "app": "DocuSeal",
+      "tags": [
+        "document",
+        "esignature",
+        "pdf"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 10,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://www.docuseal.com/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/docuseal-install.sh"
+    },
+    {
       "file": "dokploy.sh",
       "app": "Dokploy",
       "tags": [
@@ -2042,6 +2235,25 @@
       "author": "Kristian Skov",
       "has_update_script": true,
       "install_script": "install/dotnetaspwebapi-install.sh"
+    },
+    {
+      "file": "drawdb.sh",
+      "app": "DrawDB",
+      "tags": [
+        "database",
+        "dev-tools"
+      ],
+      "cpu": 2,
+      "ram": 6144,
+      "disk": 5,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/drawdb-io/drawdb",
+      "author": "MickLesk",
+      "has_update_script": true,
+      "install_script": "install/drawdb-install.sh"
     },
     {
       "file": "drawio.sh",
@@ -2165,10 +2377,30 @@
       "version": "13",
       "unprivileged": true,
       "gpu": false,
-      "source_url": "https://github.com/joaovitoriasilva/endurain",
+      "source_url": "https://codeberg.org/endurain-project/endurain",
       "author": "johanngrobe",
       "has_update_script": true,
       "install_script": "install/endurain-install.sh"
+    },
+    {
+      "file": "erpnext.sh",
+      "app": "ERPNext",
+      "tags": [
+        "erp",
+        "business",
+        "accounting"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 20,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/frappe/erpnext",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/erpnext-install.sh"
     },
     {
       "file": "ersatztv.sh",
@@ -2300,6 +2532,25 @@
       "install_script": "install/firefly-install.sh"
     },
     {
+      "file": "fireshare.sh",
+      "app": "Fireshare",
+      "tags": [
+        "sharing",
+        "video"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 10,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/ShaneIsrael/fireshare",
+      "author": "Slavi\u0161a Are\u017eina (tremor021)",
+      "has_update_script": true,
+      "install_script": "install/fireshare-install.sh"
+    },
+    {
       "file": "fladder.sh",
       "app": "Fladder",
       "tags": [
@@ -2391,6 +2642,24 @@
       "install_script": "install/fluid-calendar-install.sh"
     },
     {
+      "file": "foldergram.sh",
+      "app": "Foldergram",
+      "tags": [
+        "photos"
+      ],
+      "cpu": 1,
+      "ram": 2048,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/foldergram/foldergram",
+      "author": "Slavi\u0161a Are\u017eina (tremor021)",
+      "has_update_script": true,
+      "install_script": "install/foldergram-install.sh"
+    },
+    {
       "file": "forgejo.sh",
       "app": "Forgejo",
       "tags": [
@@ -2448,7 +2717,7 @@
       "tags": [
         "nvr"
       ],
-      "cpu": 4,
+      "cpu": 8,
       "ram": 4096,
       "disk": 20,
       "os": "debian",
@@ -2513,6 +2782,26 @@
       "author": "Slavi\u0161a Are\u017eina (tremor021)",
       "has_update_script": true,
       "install_script": "install/gatus-install.sh"
+    },
+    {
+      "file": "geopulse.sh",
+      "app": "GeoPulse",
+      "tags": [
+        "location",
+        "tracking",
+        "gps"
+      ],
+      "cpu": 2,
+      "ram": 1024,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/tess1o/geopulse",
+      "author": "CrazyWolf13",
+      "has_update_script": true,
+      "install_script": "install/geopulse-install.sh"
     },
     {
       "file": "ghost.sh",
@@ -2588,6 +2877,24 @@
       "author": "tteck (tteckster) | Co-Author: Rogue-King",
       "has_update_script": true,
       "install_script": "install/gitea-install.sh"
+    },
+    {
+      "file": "github-runner.sh",
+      "app": "GitHub-Runner",
+      "tags": [
+        "ci"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/actions/runner",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/github-runner-install.sh"
     },
     {
       "file": "glance.sh",
@@ -2682,6 +2989,26 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/go2rtc-install.sh"
+    },
+    {
+      "file": "gogs.sh",
+      "app": "Gogs",
+      "tags": [
+        "git",
+        "code",
+        "devops"
+      ],
+      "cpu": 2,
+      "ram": 1024,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://gogs.io/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/gogs-install.sh"
     },
     {
       "file": "gokapi.sh",
@@ -3021,6 +3348,26 @@
       "install_script": "install/homebridge-install.sh"
     },
     {
+      "file": "homelable.sh",
+      "app": "Homelable",
+      "tags": [
+        "monitoring",
+        "network",
+        "visualization"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/Pouzor/homelable",
+      "author": "MickLesk",
+      "has_update_script": true,
+      "install_script": "install/homelable-install.sh"
+    },
+    {
       "file": "homepage.sh",
       "app": "Homepage",
       "tags": [
@@ -3055,6 +3402,25 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/homer-install.sh"
+    },
+    {
+      "file": "hoodik.sh",
+      "app": "Hoodik",
+      "tags": [
+        "cloud",
+        "storage"
+      ],
+      "cpu": 1,
+      "ram": 1024,
+      "disk": 5,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/hudikhq/hoodik",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/hoodik-install.sh"
     },
     {
       "file": "hortusfox.sh",
@@ -3109,6 +3475,25 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/hyperion-install.sh"
+    },
+    {
+      "file": "igotify.sh",
+      "app": "iGotify",
+      "tags": [
+        "notifications",
+        "gotify"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/androidseb25/iGotify-Notification-Assistent",
+      "author": "pfassina",
+      "has_update_script": true,
+      "install_script": "install/igotify-install.sh"
     },
     {
       "file": "immich.sh",
@@ -3277,6 +3662,26 @@
       "install_script": "install/iobroker-install.sh"
     },
     {
+      "file": "ironclaw.sh",
+      "app": "IronClaw",
+      "tags": [
+        "ai",
+        "agent",
+        "security"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/nearai/ironclaw",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/ironclaw-install.sh"
+    },
+    {
       "file": "isponsorblocktv.sh",
       "app": "iSponsorBlockTV",
       "tags": [
@@ -3404,6 +3809,26 @@
       "author": "kristocopani",
       "has_update_script": true,
       "install_script": "install/jenkins-install.sh"
+    },
+    {
+      "file": "jitsi-meet.sh",
+      "app": "Jitsi-Meet",
+      "tags": [
+        "video",
+        "conference",
+        "communication"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 12,
+      "os": "debian",
+      "version": "12",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://jitsi.org/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/jitsi-meet-install.sh"
     },
     {
       "file": "joplin-server.sh",
@@ -3793,6 +4218,25 @@
       "install_script": "install/leantime-install.sh"
     },
     {
+      "file": "librechat.sh",
+      "app": "LibreChat",
+      "tags": [
+        "ai",
+        "chat"
+      ],
+      "cpu": 4,
+      "ram": 6144,
+      "disk": 20,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/danny-avila/LibreChat",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/librechat-install.sh"
+    },
+    {
       "file": "librenms.sh",
       "app": "LibreNMS",
       "tags": [
@@ -3958,25 +4402,6 @@
       "install_script": "install/listmonk-install.sh"
     },
     {
-      "file": "litellm.sh",
-      "app": "LiteLLM",
-      "tags": [
-        "ai",
-        "interface"
-      ],
-      "cpu": 2,
-      "ram": 2048,
-      "disk": 4,
-      "os": "debian",
-      "version": "13",
-      "unprivileged": true,
-      "gpu": false,
-      "source_url": "https://github.com/BerriAI/litellm",
-      "author": "stout01",
-      "has_update_script": true,
-      "install_script": "install/litellm-install.sh"
-    },
-    {
       "file": "livebook.sh",
       "app": "Livebook",
       "tags": [
@@ -4049,6 +4474,26 @@
       "author": "kristocopani",
       "has_update_script": true,
       "install_script": "install/lubelogger-install.sh"
+    },
+    {
+      "file": "lychee.sh",
+      "app": "Lychee",
+      "tags": [
+        "media",
+        "photos",
+        "gallery"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/LycheeOrg/Lychee",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/lychee-install.sh"
     },
     {
       "file": "lyrionmusicserver.sh",
@@ -4176,6 +4621,46 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/mariadb-install.sh"
+    },
+    {
+      "file": "matomo.sh",
+      "app": "Matomo",
+      "tags": [
+        "analytics",
+        "tracking",
+        "privacy"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 16,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://matomo.org/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/matomo-install.sh"
+    },
+    {
+      "file": "matter-server.sh",
+      "app": "Matter-Server",
+      "tags": [
+        "matter",
+        "iot",
+        "smart-home"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/matter-js/python-matter-server",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/matter-server-install.sh"
     },
     {
       "file": "matterbridge.sh",
@@ -4396,6 +4881,24 @@
       "install_script": "install/minarca-install.sh"
     },
     {
+      "file": "mini-qr.sh",
+      "app": "Mini-QR",
+      "tags": [
+        "QRcode"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 6,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/lyqht/mini-qr",
+      "author": "doge0420",
+      "has_update_script": true,
+      "install_script": "install/mini-qr-install.sh"
+    },
+    {
       "file": "miniflux.sh",
       "app": "Miniflux",
       "tags": [
@@ -4430,6 +4933,24 @@
       "author": "MickLesk (CanbiZ)",
       "has_update_script": true,
       "install_script": "install/minio-install.sh"
+    },
+    {
+      "file": "minthcm.sh",
+      "app": "MintHCM",
+      "tags": [
+        "hcm"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 20,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/minthcm/minthcm",
+      "author": "MintHCM",
+      "has_update_script": true,
+      "install_script": "install/minthcm-install.sh"
     },
     {
       "file": "mongodb.sh",
@@ -4596,6 +5117,45 @@
       "install_script": "install/n8n-install.sh"
     },
     {
+      "file": "nagios.sh",
+      "app": "Nagios",
+      "tags": [
+        "monitoring",
+        "alerts",
+        "infrastructure"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 20,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/NagiosEnterprises/nagioscore",
+      "author": "CanbiZ (MickLesk)",
+      "has_update_script": true,
+      "install_script": "install/nagios-install.sh"
+    },
+    {
+      "file": "nametag.sh",
+      "app": "Nametag",
+      "tags": [
+        "contacts",
+        "crm"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/mattogodoy/nametag",
+      "author": "MickLesk",
+      "has_update_script": true,
+      "install_script": "install/nametag-install.sh"
+    },
+    {
       "file": "navidrome.sh",
       "app": "Navidrome",
       "tags": [
@@ -4612,6 +5172,26 @@
       "author": "MickLesk (CanbiZ)",
       "has_update_script": true,
       "install_script": "install/navidrome-install.sh"
+    },
+    {
+      "file": "neko.sh",
+      "app": "Neko",
+      "tags": [
+        "virtual-browser",
+        "webrtc",
+        "streaming"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 12,
+      "os": "debian",
+      "version": "12",
+      "unprivileged": true,
+      "gpu": true,
+      "source_url": "https://neko.m1k1o.net/",
+      "author": "CanbiZ (MickLesk)",
+      "has_update_script": true,
+      "install_script": "install/neko-install.sh"
     },
     {
       "file": "neo4j.sh",
@@ -4651,6 +5231,26 @@
       "install_script": "install/netbird-install.sh"
     },
     {
+      "file": "netboot-xyz.sh",
+      "app": "netboot.xyz",
+      "tags": [
+        "network",
+        "pxe",
+        "boot"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://netboot.xyz",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/netboot-xyz-install.sh"
+    },
+    {
       "file": "netbox.sh",
       "app": "NetBox",
       "tags": [
@@ -4685,6 +5285,25 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/nextcloudpi-install.sh"
+    },
+    {
+      "file": "nextexplorer.sh",
+      "app": "nextExplorer",
+      "tags": [
+        "files",
+        "documents"
+      ],
+      "cpu": 2,
+      "ram": 3072,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/nxzai/nextExplorer",
+      "author": "vhsdream",
+      "has_update_script": true,
+      "install_script": "install/nextexplorer-install.sh"
     },
     {
       "file": "nextpvr.sh",
@@ -4738,7 +5357,7 @@
       "unprivileged": true,
       "gpu": false,
       "source_url": "https://nginxproxymanager.com/",
-      "author": "tteck (tteckster) | Co-Author: CrazyWolf13",
+      "author": "tteck (tteckster) | Co-Author: CrazyWolf13, MickLesk (CanbiZ)",
       "has_update_script": true,
       "install_script": "install/nginxproxymanager-install.sh"
     },
@@ -5201,6 +5820,27 @@
       "install_script": "install/openproject-install.sh"
     },
     {
+      "file": "openthread-br.sh",
+      "app": "OpenThread-BR",
+      "tags": [
+        "thread",
+        "iot",
+        "border-router",
+        "matter"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": false,
+      "gpu": false,
+      "source_url": "https://openthread.io/guides/border-router",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/openthread-br-install.sh"
+    },
+    {
       "file": "openwebui.sh",
       "app": "Open WebUI",
       "tags": [
@@ -5328,6 +5968,24 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/owncast-install.sh"
+    },
+    {
+      "file": "ownfoil.sh",
+      "app": "ownfoil",
+      "tags": [
+        "gaming"
+      ],
+      "cpu": 1,
+      "ram": 1024,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/a1ex4/ownfoil",
+      "author": "pajjski",
+      "has_update_script": true,
+      "install_script": "install/ownfoil-install.sh"
     },
     {
       "file": "pairdrop.sh",
@@ -5489,7 +6147,7 @@
       "version": "13",
       "unprivileged": true,
       "gpu": false,
-      "source_url": "https://github.com/PatcMmon/PatchMon",
+      "source_url": "https://github.com/PatchMon/PatchMon",
       "author": "vhsdream",
       "has_update_script": true,
       "install_script": "install/patchmon-install.sh"
@@ -5568,24 +6226,6 @@
       "author": "bvdberg01",
       "has_update_script": true,
       "install_script": "install/pelican-wings-install.sh"
-    },
-    {
-      "file": "pf2etools.sh",
-      "app": "Pf2eTools",
-      "tags": [
-        "wiki"
-      ],
-      "cpu": 1,
-      "ram": 512,
-      "disk": 6,
-      "os": "debian",
-      "version": "13",
-      "unprivileged": true,
-      "gpu": false,
-      "source_url": "https://pf2etools.com/",
-      "author": "TheRealVira",
-      "has_update_script": true,
-      "install_script": "install/pf2etools-install.sh"
     },
     {
       "file": "photoprism.sh",
@@ -5939,6 +6579,25 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/prometheus-install.sh"
+    },
+    {
+      "file": "protonmail-bridge.sh",
+      "app": "ProtonMail-Bridge",
+      "tags": [
+        "mail",
+        "proton"
+      ],
+      "cpu": 2,
+      "ram": 1024,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/ProtonMail/proton-bridge",
+      "author": "Stephen Chin (steveonjava)",
+      "has_update_script": true,
+      "install_script": "install/protonmail-bridge-install.sh"
     },
     {
       "file": "prowlarr.sh",
@@ -6709,6 +7368,26 @@
       "install_script": "install/shinobi-install.sh"
     },
     {
+      "file": "shlink.sh",
+      "app": "Shlink",
+      "tags": [
+        "url-shortener",
+        "analytics",
+        "php"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://shlink.io/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/shlink-install.sh"
+    },
+    {
       "file": "signoz.sh",
       "app": "SigNoz",
       "tags": [
@@ -6819,6 +7498,26 @@
       "install_script": "install/snowshare-install.sh"
     },
     {
+      "file": "solidtime.sh",
+      "app": "SolidTime",
+      "tags": [
+        "time-tracking",
+        "productivity",
+        "business"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://www.solidtime.io/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/solidtime-install.sh"
+    },
+    {
       "file": "sonarqube.sh",
       "app": "SonarQube",
       "tags": [
@@ -6872,6 +7571,26 @@
       "author": "GoldenSpringness",
       "has_update_script": true,
       "install_script": "install/sonobarr-install.sh"
+    },
+    {
+      "file": "soulsync.sh",
+      "app": "SoulSync",
+      "tags": [
+        "music",
+        "automation",
+        "media"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/Nezreka/SoulSync",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/soulsync-install.sh"
     },
     {
       "file": "sparkyfitness.sh",
@@ -7021,6 +7740,26 @@
       "install_script": "install/sqlserver2025-install.sh"
     },
     {
+      "file": "step-ca.sh",
+      "app": "step-ca",
+      "tags": [
+        "certificate-authority",
+        "pki",
+        "acme-server"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 2,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/smallstep/certificates",
+      "author": "Joerg Heinemann (heinemannj)",
+      "has_update_script": true,
+      "install_script": "install/step-ca-install.sh"
+    },
+    {
       "file": "stirling-pdf.sh",
       "app": "Stirling-PDF",
       "tags": [
@@ -7037,6 +7776,46 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/stirling-pdf-install.sh"
+    },
+    {
+      "file": "storybook.sh",
+      "app": "Storybook",
+      "tags": [
+        "dev-tools",
+        "frontend",
+        "ui"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/storybookjs/storybook",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/storybook-install.sh"
+    },
+    {
+      "file": "storyteller.sh",
+      "app": "Storyteller",
+      "tags": [
+        "media",
+        "ebook",
+        "audiobook"
+      ],
+      "cpu": 4,
+      "ram": 10240,
+      "disk": 20,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://gitlab.com/storyteller-platform/storyteller",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/storyteller-install.sh"
     },
     {
       "file": "strapi.sh",
@@ -7237,6 +8016,26 @@
       "author": "tteck (tteckster)",
       "has_update_script": true,
       "install_script": "install/tdarr-install.sh"
+    },
+    {
+      "file": "teable.sh",
+      "app": "Teable",
+      "tags": [
+        "database",
+        "no-code",
+        "spreadsheet"
+      ],
+      "cpu": 4,
+      "ram": 10240,
+      "disk": 25,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/teableio/teable",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/teable-install.sh"
     },
     {
       "file": "teamspeak-server.sh",
@@ -7467,7 +8266,7 @@
         "media"
       ],
       "cpu": 2,
-      "ram": 4096,
+      "ram": 8192,
       "disk": 10,
       "os": "debian",
       "version": "13",
@@ -7534,6 +8333,45 @@
       "install_script": "install/transmission-install.sh"
     },
     {
+      "file": "transmute.sh",
+      "app": "Transmute",
+      "tags": [
+        "files",
+        "converter"
+      ],
+      "cpu": 4,
+      "ram": 4096,
+      "disk": 16,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/transmute-app/transmute",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/transmute-install.sh"
+    },
+    {
+      "file": "trek.sh",
+      "app": "TREK",
+      "tags": [
+        "travel",
+        "planning",
+        "collaboration"
+      ],
+      "cpu": 2,
+      "ram": 2048,
+      "disk": 8,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/mauriceboe/TREK",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/trek-install.sh"
+    },
+    {
       "file": "trilium.sh",
       "app": "Trilium",
       "tags": [
@@ -7569,6 +8407,26 @@
       "author": "CrazyWolf13",
       "has_update_script": true,
       "install_script": "install/trip-install.sh"
+    },
+    {
+      "file": "tubearchivist.sh",
+      "app": "Tube Archivist",
+      "tags": [
+        "media",
+        "youtube",
+        "archiving"
+      ],
+      "cpu": 4,
+      "ram": 6144,
+      "disk": 30,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://github.com/tubearchivist/tubearchivist",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/tubearchivist-install.sh"
     },
     {
       "file": "tududi.sh",
@@ -7625,24 +8483,6 @@
       "author": "twingate-andrewb",
       "has_update_script": true,
       "install_script": "install/twingate-connector-install.sh"
-    },
-    {
-      "file": "typesense.sh",
-      "app": "TypeSense",
-      "tags": [
-        "database"
-      ],
-      "cpu": 1,
-      "ram": 1024,
-      "disk": 4,
-      "os": "debian",
-      "version": "13",
-      "unprivileged": true,
-      "gpu": false,
-      "source_url": "https://typesense.org/",
-      "author": "tlissak | Co-Author MickLesk",
-      "has_update_script": true,
-      "install_script": "install/typesense-install.sh"
     },
     {
       "file": "ubuntu.sh",
@@ -7881,12 +8721,12 @@
       "install_script": "install/vaultwarden-install.sh"
     },
     {
-      "file": "verdaccio.sh",
-      "app": "Verdaccio",
+      "file": "versitygw.sh",
+      "app": "VersityGW",
       "tags": [
-        "dev-tools",
-        "npm",
-        "registry"
+        "s3",
+        "storage",
+        "gateway"
       ],
       "cpu": 2,
       "ram": 2048,
@@ -7895,10 +8735,10 @@
       "version": "13",
       "unprivileged": true,
       "gpu": false,
-      "source_url": "https://verdaccio.org/",
-      "author": "BrynnJKnight",
+      "source_url": "https://github.com/versity/versitygw",
+      "author": "MickLesk (CanbiZ)",
       "has_update_script": true,
-      "install_script": "install/verdaccio-install.sh"
+      "install_script": "install/versitygw-install.sh"
     },
     {
       "file": "victoriametrics.sh",
@@ -8178,6 +9018,26 @@
       "install_script": "install/whisparr-install.sh"
     },
     {
+      "file": "whodb.sh",
+      "app": "WhoDB",
+      "tags": [
+        "database",
+        "management",
+        "gui"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 2,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://whodb.com/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/whodb-install.sh"
+    },
+    {
       "file": "wikijs.sh",
       "app": "Wikijs",
       "tags": [
@@ -8308,6 +9168,25 @@
       "author": "MickLesk (CanbiZ)",
       "has_update_script": true,
       "install_script": "install/yamtrack-install.sh"
+    },
+    {
+      "file": "yourls.sh",
+      "app": "YOURLS",
+      "tags": [
+        "url-shortener",
+        "php"
+      ],
+      "cpu": 1,
+      "ram": 512,
+      "disk": 4,
+      "os": "debian",
+      "version": "13",
+      "unprivileged": true,
+      "gpu": false,
+      "source_url": "https://yourls.org/",
+      "author": "MickLesk (CanbiZ)",
+      "has_update_script": true,
+      "install_script": "install/yourls-install.sh"
     },
     {
       "file": "yt-dlp-webui.sh",

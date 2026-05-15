@@ -8,7 +8,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 APP="Tracearr"
 var_tags="${var_tags:-media}"
 var_cpu="${var_cpu:-2}"
-var_ram="${var_ram:-4096}"
+var_ram="${var_ram:-8192}"
 var_disk="${var_disk:-10}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
@@ -102,7 +102,7 @@ EOF
 
   if check_for_gh_release "tracearr" "connorgallopo/Tracearr"; then
     msg_info "Stopping Services"
-    systemctl stop tracearr postgresql redis
+    systemctl stop tracearr postgresql redis-server
     msg_ok "Stopped Services"
 
     msg_info "Updating pnpm"
@@ -115,6 +115,7 @@ EOF
 
     msg_info "Building Tracearr"
     export TZ=$(cat /etc/timezone)
+    export NODE_OPTIONS="--max-old-space-size=4096"
     cd /opt/tracearr.build
     $STD pnpm install --frozen-lockfile --force
     $STD pnpm turbo telemetry disable
@@ -148,7 +149,7 @@ EOF
     msg_ok "Configured Tracearr"
 
     msg_info "Starting services"
-    systemctl start postgresql redis tracearr
+    systemctl start postgresql redis-server tracearr
     msg_ok "Started services"
     msg_ok "Updated successfully!"
   else

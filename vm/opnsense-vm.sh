@@ -24,7 +24,7 @@ RANDOM_UUID="$(cat /proc/sys/kernel/random/uuid)"
 METHOD=""
 NSAPP="opnsense-vm"
 var_os="opnsense"
-var_version="25.7"
+var_version="26.1"
 #
 GEN_MAC=02:$(openssl rand -hex 5 | awk '{print toupper($0)}' | sed 's/\(..\)/\1:/g; s/.$//')
 GEN_MAC_LAN=02:$(openssl rand -hex 5 | awk '{print toupper($0)}' | sed 's/\(..\)/\1:/g; s/.$//')
@@ -317,7 +317,7 @@ function default_settings() {
 
   # Determine available network modes based on bridge count
   local DEFAULT_WAN_BRG
-  DEFAULT_WAN_BRG=$(echo "$AVAILABLE_BRIDGES" | grep -v "^${BRG}$" | head -n1)
+  DEFAULT_WAN_BRG=$(echo "$AVAILABLE_BRIDGES" | grep -v "^${BRG}$" | head -n1 || true)
 
   if [ "$BRIDGE_COUNT" -ge 2 ]; then
     # Multiple bridges available - offer dual or single mode
@@ -509,7 +509,7 @@ function advanced_settings() {
 
   # Build WAN bridge selection from available bridges (excluding LAN bridge)
   local WAN_BRIDGES
-  WAN_BRIDGES=$(get_available_bridges | grep -v "^${BRG}$")
+  WAN_BRIDGES=$(get_available_bridges | grep -v "^${BRG}$" || true)
   if [ -z "$WAN_BRIDGES" ]; then
     msg_error "No additional bridge available for WAN. Only '${BRG}' exists."
     msg_error "Create a second bridge (e.g. vmbr1) in Proxmox network config first."
@@ -737,9 +737,26 @@ done
 
 msg_info "Creating a OPNsense VM"
 qm create $VMID -agent 1${MACHINE} -tablet 0 -localtime 1 -bios ovmf${CPU_TYPE} -cores $CORE_COUNT -memory $RAM_SIZE \
-  -name $HN -tags proxmox-helper-scripts -net0 virtio,bridge=$BRG,macaddr=$MAC$VLAN$MTU -onboot 1 -ostype l26 -scsihw virtio-scsi-pci
-pvesm alloc $STORAGE $VMID $DISK0 4M 1>&/dev/null
-qm importdisk $VMID ${FILE} $STORAGE ${DISK_IMPORT:-} 1>&/dev/null
+  -name $HN -tags community-script -net0 virtio,bridge=$BRG,macaddr=$MAC$VLAN$MTU -onboot 1 -ostype l26 -scsihw virtio-scsi-pci
+
+# Retry pvesm alloc on transient zfs_request "got timeout" errors (#14127)
+alloc_attempt=1
+alloc_max=4
+alloc_delay=5
+while :; do
+  alloc_err=$(pvesm alloc $STORAGE $VMID $DISK0 4M 2>&1 >/dev/null) && break
+  if [[ "$alloc_err" == *"got timeout"* && $alloc_attempt -lt $alloc_max ]]; then
+    msg_warn "pvesm alloc hit zfs timeout (attempt $alloc_attempt/$alloc_max), retrying in ${alloc_delay}s..."
+    pvesm free "${DISK0_REF}" &>/dev/null || true
+    sleep "$alloc_delay"
+    alloc_attempt=$((alloc_attempt + 1))
+    alloc_delay=$((alloc_delay * 2))
+    continue
+  fi
+  echo -e "$alloc_err" >&2
+  exit 220
+done
+qm importdisk $VMID ${FILE} $STORAGE ${DISK_IMPORT:-} &>/dev/null
 qm set $VMID \
   -efidisk0 ${DISK0_REF}${FORMAT} \
   -scsi0 ${DISK1_REF},${DISK_CACHE}${THIN}size=2G \
@@ -750,7 +767,7 @@ qm resize $VMID scsi0 20G >/dev/null
 DESCRIPTION=$(
   cat <<EOF
 <div align='center'>
-  <a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'>
+  <a href='https://community-scripts.org' target='_blank' rel='noopener noreferrer'>
     <img src='https://raw.githubusercontent.com/michelroegl-brunner/ProxmoxVE/refs/heads/develop/misc/images/logo-81x112.png' alt='Logo' style='width:81px;height:112px;'/>
   </a>
 
@@ -797,7 +814,7 @@ if [ -n "$WAN_BRG" ]; then
   msg_ok "WAN interface added"
   sleep 5 # Brief pause after adding network interface
 fi
-send_line_to_vm "sh ./opnsense-bootstrap.sh.in -y -f -r 25.7"
+send_line_to_vm "sh ./opnsense-bootstrap.sh.in -y -f -r 26.1"
 msg_ok "OPNsense VM is being installed, do not close the terminal, or the installation will fail."
 #We need to wait for the OPNsense build proccess to finish, this takes a few minutes
 sleep 1000

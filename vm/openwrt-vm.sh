@@ -605,7 +605,7 @@ msg_ok "Resized disk to ${DISK_SIZE}"
 DESCRIPTION=$(
   cat <<EOF
 <div align='center'>
-  <a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'>
+  <a href='https://community-scripts.org' target='_blank' rel='noopener noreferrer'>
     <img src='https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/images/logo-81x112.png' alt='Logo' style='width:81px;height:112px;'/>
   </a>
 
@@ -663,7 +663,7 @@ if qm status "$VMID" | grep -q "running"; then
   send_line_to_vm "uci set network.lan.ipaddr=${LAN_IP_ADDR}"
   send_line_to_vm "uci set network.lan.netmask=${LAN_NETMASK}"
   send_line_to_vm "uci commit"
-  send_line_to_vm "halt"
+  send_line_to_vm "poweroff"
   msg_ok "Network interfaces configured in OpenWrt"
 else
   msg_error "VM is not running"

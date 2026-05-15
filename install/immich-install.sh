@@ -175,7 +175,8 @@ cd "$STAGING_DIR"
 SOURCE=${SOURCE_DIR}/libjxl
 JPEGLI_LIBJPEG_LIBRARY_SOVERSION="62"
 JPEGLI_LIBJPEG_LIBRARY_VERSION="62.3.0"
-: "${LIBJXL_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libjxl.json)}"
+LIBJXL_REVISION="794a5dcf0d54f9f0b20d288a12e87afb91d20dfc"
+# : "${LIBJXL_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libjxl.json)}"
 $STD git clone https://github.com/libjxl/libjxl.git "$SOURCE"
 cd "$SOURCE"
 $STD git reset --hard "$LIBJXL_REVISION"
@@ -212,7 +213,8 @@ msg_ok "(1/5) Compiled libjxl"
 
 msg_info "(2/5) Compiling libheif"
 SOURCE=${SOURCE_DIR}/libheif
-: "${LIBHEIF_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libheif.json)}"
+LIBHEIF_REVISION="35dad50a9145332a7bfdf1ff6aef6801fb613d68"
+# : "${LIBHEIF_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libheif.json)}"
 $STD git clone https://github.com/strukturag/libheif.git "$SOURCE"
 cd "$SOURCE"
 $STD git reset --hard "$LIBHEIF_REVISION"
@@ -237,7 +239,8 @@ msg_ok "(2/5) Compiled libheif"
 
 msg_info "(3/5) Compiling libraw"
 SOURCE=${SOURCE_DIR}/libraw
-: "${LIBRAW_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libraw.json)}"
+LIBRAW_REVISION="0b56545a4f828743f28a4345cdfdd4c49f9f9a2a"
+# : "${LIBRAW_REVISION:=$(jq -cr '.revision' $BASE_DIR/server/sources/libraw.json)}"
 $STD git clone https://github.com/LibRaw/LibRaw.git "$SOURCE"
 cd "$SOURCE"
 $STD git reset --hard "$LIBRAW_REVISION"
@@ -295,7 +298,7 @@ ML_DIR="${APP_DIR}/machine-learning"
 GEO_DIR="${INSTALL_DIR}/geodata"
 mkdir -p {"${APP_DIR}","${UPLOAD_DIR}","${GEO_DIR}","${INSTALL_DIR}"/cache}
 
-fetch_and_deploy_gh_release "Immich" "immich-app/immich" "tarball" "v2.6.1" "$SRC_DIR"
+fetch_and_deploy_gh_release "Immich" "immich-app/immich" "tarball" "v2.7.5" "$SRC_DIR"
 PNPM_VERSION="$(jq -r '.packageManager | split("@")[1] | split("+")[0]' ${SRC_DIR}/package.json)"
 NODE_VERSION="24" NODE_MODULE="pnpm@${PNPM_VERSION}" setup_nodejs
 
@@ -312,6 +315,12 @@ $STD pnpm --filter immich --frozen-lockfile build
 unset SHARP_IGNORE_GLOBAL_LIBVIPS
 export SHARP_FORCE_GLOBAL_LIBVIPS=true
 $STD pnpm --filter immich --frozen-lockfile --prod --no-optional deploy "$APP_DIR"
+
+# Patch helmet.json: disable upgrade-insecure-requests for HTTP access
+if [[ -f "$APP_DIR/helmet.json" ]]; then
+  jq '.contentSecurityPolicy.directives["upgrade-insecure-requests"] = null' "$APP_DIR/helmet.json" >"$APP_DIR/helmet.json.tmp" && mv "$APP_DIR/helmet.json.tmp" "$APP_DIR/helmet.json"
+fi
+
 cp "$APP_DIR"/package.json "$APP_DIR"/bin
 sed -i "s|^start|${APP_DIR}/bin/start|" "$APP_DIR"/bin/immich-admin
 
@@ -344,7 +353,11 @@ msg_ok "Installed Immich Server, Web and Plugin Components"
 
 cd "$SRC_DIR"/machine-learning
 $STD useradd -U -s /usr/sbin/nologin -r -M -d "$INSTALL_DIR" immich
-mkdir -p "$ML_DIR" && chown -R immich:immich "$INSTALL_DIR"
+mkdir -p "$ML_DIR"
+# chown excluding upload dir contents (may be a mount with restricted permissions)
+chown immich:immich "$INSTALL_DIR"
+find "$INSTALL_DIR" -maxdepth 1 -mindepth 1 ! -name upload -exec chown -R immich:immich {} +
+chown immich:immich "$UPLOAD_DIR" 2>/dev/null || true
 export VIRTUAL_ENV="${ML_DIR}/ml-venv"
 export UV_HTTP_TIMEOUT=300
 if [[ -f ~/.openvino ]]; then
@@ -415,6 +428,9 @@ IMMICH_VERSION=release
 NODE_ENV=production
 IMMICH_ALLOW_SETUP=true
 
+## Change to 'false' to disable CSP
+IMMICH_HELMET_FILE=true
+
 DB_HOSTNAME=127.0.0.1
 DB_USERNAME=${PG_DB_USER}
 DB_PASSWORD=${PG_DB_PASS}
@@ -469,8 +485,7 @@ User=immich
 Group=immich
 UMask=0077
 WorkingDirectory=${APP_DIR}
-EnvironmentFile=${INSTALL_DIR}/.env
-ExecStart=/usr/bin/node ${APP_DIR}/dist/main
+ExecStart=${APP_DIR}/bin/start.sh
 Restart=on-failure
 SyslogIdentifier=immich-web
 StandardOutput=append:/var/log/immich/web.log
@@ -500,7 +515,11 @@ StandardError=append:/var/log/immich/ml.log
 [Install]
 WantedBy=multi-user.target
 EOF
-chown -R immich:immich "$INSTALL_DIR" /var/log/immich
+chown -R immich:immich /var/log/immich
+# chown excluding upload dir contents (may be a mount with restricted permissions)
+chown immich:immich "$INSTALL_DIR"
+find "$INSTALL_DIR" -maxdepth 1 -mindepth 1 ! -name upload -exec chown -R immich:immich {} +
+chown immich:immich "$UPLOAD_DIR" 2>/dev/null || true
 systemctl enable -q --now immich-ml.service immich-web.service
 msg_ok "Modified user, created env file, scripts and services"
 

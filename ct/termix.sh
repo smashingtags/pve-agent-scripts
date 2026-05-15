@@ -29,6 +29,8 @@ function update_script() {
     exit
   fi
 
+  NODE_VERSION="24" setup_nodejs
+
   if check_for_gh_tag "guacd" "apache/guacamole-server"; then
     msg_info "Stopping guacd"
     systemctl stop guacd 2>/dev/null || true
@@ -145,7 +147,7 @@ EOF
     cp -r /opt/termix/uploads /opt/termix_uploads_backup
     msg_ok "Backed up Data"
 
-    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "termix" "Termix-SSH/Termix"
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "termix" "Termix-SSH/Termix" "tarball"
 
     msg_info "Recreating Directories"
     mkdir -p /opt/termix/html \
@@ -197,12 +199,17 @@ EOF
       cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
       curl -fsSL "https://raw.githubusercontent.com/Termix-SSH/Termix/main/docker/nginx.conf" -o /etc/nginx/nginx.conf
       sed -i '/^master_process/d' /etc/nginx/nginx.conf
-      sed -i '/^pid \/app\/nginx/d' /etc/nginx/nginx.conf
+      sed -i 's|pid /tmp/nginx/nginx.pid;|pid /run/nginx.pid;|' /etc/nginx/nginx.conf
+      sed -i 's|error_log /tmp/nginx/error.log|error_log /var/log/nginx/error.log|' /etc/nginx/nginx.conf
+      sed -i 's|access_log /tmp/nginx/access.log|access_log /var/log/nginx/access.log|' /etc/nginx/nginx.conf
       sed -i 's|/app/html|/opt/termix/html|g' /etc/nginx/nginx.conf
       sed -i 's|/app/nginx|/opt/termix/nginx|g' /etc/nginx/nginx.conf
       sed -i 's|listen ${PORT};|listen 80;|g' /etc/nginx/nginx.conf
 
-      nginx -t && systemctl reload nginx
+      rm -f /etc/systemd/system/nginx.service.d/pidfile.conf
+      rm -f /etc/tmpfiles.d/nginx-termix.conf
+      systemctl daemon-reload
+      nginx -t && systemctl restart nginx
       msg_ok "Updated Nginx Configuration"
     else
       msg_warn "Nginx configuration not updated. If Termix doesn't work, restore from backup or update manually."
