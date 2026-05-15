@@ -152,6 +152,41 @@ def build_catalog():
             print(f"  SKIP: {ct_file.name} (no APP= found)", file=sys.stderr)
 
     print(f"Parsed {len(catalog)} apps successfully.", file=sys.stderr)
+
+    # Deduplicate: when multiple scripts define the same APP name,
+    # prefer the one whose filename stem matches the APP name.
+    # e.g. scanopy.sh beats netvisor.sh for APP="Scanopy"
+    seen: dict[str, int] = {}
+    duplicates: list[str] = []
+    for i, entry in enumerate(catalog):
+        app_name = entry["app"]
+        if app_name in seen:
+            duplicates.append(app_name)
+        seen.setdefault(app_name, i)
+
+    if duplicates:
+        for dup_name in set(duplicates):
+            entries = [(i, e) for i, e in enumerate(catalog) if e["app"] == dup_name]
+            # Prefer the entry whose filename stem matches the app name (case-insensitive)
+            app_lower = dup_name.lower().replace(" ", "").replace("-", "")
+            best = None
+            for i, e in entries:
+                stem = e["file"].replace(".sh", "").lower().replace("-", "")
+                if stem == app_lower:
+                    best = i
+                    break
+            # If no filename match, keep the last entry (newest)
+            if best is None:
+                best = entries[-1][0]
+            # Mark losers for removal
+            for i, e in entries:
+                if i != best:
+                    print(f"  DEDUP: dropping {e['file']} (duplicate APP=\"{dup_name}\", keeping {catalog[best]['file']})", file=sys.stderr)
+                    catalog[i] = None  # type: ignore[assignment]
+
+        catalog = [e for e in catalog if e is not None]
+        print(f"After dedup: {len(catalog)} apps.", file=sys.stderr)
+
     return catalog
 
 

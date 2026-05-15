@@ -8,7 +8,7 @@ on:
 
 jobs:
   autolabeler:
-    if: github.repository == 'community-scripts/ProxmoxVE'
+    if: github.repository == 'smashingtags/pve-agent-scripts'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write

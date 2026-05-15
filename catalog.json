@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated_by": "tools/convert.py",
-  "app_count": 465,
+  "app_count": 464,
   "apps": [
     {
       "file": "2fauth.sh",
@@ -4667,24 +4667,6 @@
       "author": "bvdberg01",
       "has_update_script": true,
       "install_script": "install/netbox-install.sh"
-    },
-    {
-      "file": "netvisor.sh",
-      "app": "Scanopy",
-      "tags": [
-        "analytics"
-      ],
-      "cpu": 2,
-      "ram": 3072,
-      "disk": 6,
-      "os": "debian",
-      "version": "13",
-      "unprivileged": true,
-      "gpu": false,
-      "source_url": "https://github.com/scanopy/scanopy",
-      "author": "vhsdream",
-      "has_update_script": true,
-      "install_script": "install/scanopy-install.sh"
     },
     {
       "file": "nextcloudpi.sh",

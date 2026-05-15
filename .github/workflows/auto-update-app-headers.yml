@@ -10,7 +10,7 @@ on:
 
 jobs:
   update-app-files:
-    if: github.repository == 'community-scripts/ProxmoxVE'
+    if: github.repository == 'smashingtags/pve-agent-scripts'
     runs-on: ubuntu-latest
 
     permissions:

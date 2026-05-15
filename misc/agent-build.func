@@ -500,7 +500,7 @@ DRYEOF
 
   # --- Actual container creation (all Proxmox API calls preserved) ---
 
-  NET_STRING="--net0 name=eth0,bridge=${BRG:-vmbr0}"
+  NET_STRING="-net0 name=eth0,bridge=${BRG:-vmbr0}"
 
   [[ -n "${MAC:-}" ]] && case "$MAC" in ,hwaddr=*) NET_STRING+="$MAC" ;; *) NET_STRING+=",hwaddr=$MAC" ;; esac
   NET_STRING+=",ip=${NET:-dhcp}"
@@ -583,27 +583,19 @@ DRYEOF
     # Download template
     pveam download "$TEMPLATE_STORAGE" "$TEMPLATE" >/dev/null 2>&1 || true
 
-    # Build net0 value string (without the --net0 flag)
-    NET_VALUE="name=eth0,bridge=${BRG:-vmbr0}"
-    [[ -n "${MAC:-}" ]] && NET_VALUE+=",hwaddr=$MAC"
-    NET_VALUE+=",ip=${NET:-dhcp}"
-    [[ -n "${GATE:-}" ]] && NET_VALUE+=",gw=$GATE"
-    [[ -n "${VLAN:-}" ]] && NET_VALUE+=",tag=$VLAN"
-    [[ -n "${MTU:-}" ]] && NET_VALUE+=",mtu=$MTU"
-
     PCT_OPTIONS=(
-      --hostname "$HN"
-      --tags "${TAGS//;/,}"
-      --onboot 1
-      --cores "$CORE_COUNT"
-      --memory "$RAM_SIZE"
-      --rootfs "${CONTAINER_STORAGE}:${DISK_SIZE}"
-      --ostype "$var_os"
-      --net0 "$NET_VALUE"
+      -hostname "$HN"
+      -tags "${TAGS//;/,}"
+      -onboot 1
+      -cores "$CORE_COUNT"
+      -memory "$RAM_SIZE"
+      -rootfs "${CONTAINER_STORAGE}:${DISK_SIZE}"
+      -ostype "$var_os"
+      "$NET_STRING"
     )
 
-    [[ -n "$FEATURES" ]] && PCT_OPTIONS+=(--features "$FEATURES")
-    [[ "$CT_TYPE" == "1" ]] && PCT_OPTIONS+=(--unprivileged 1)
+    [[ -n "$FEATURES" ]] && PCT_OPTIONS+=(-features "$FEATURES")
+    [[ "$CT_TYPE" == "1" ]] && PCT_OPTIONS+=(-unprivileged 1)
     [[ -n "$PW" ]] && PCT_OPTIONS+=($PW)
 
     if ! pct create "$CT_ID" "${TEMPLATE_STORAGE}:vztmpl/${TEMPLATE}" "${PCT_OPTIONS[@]}" >>"$BUILD_LOG" 2>&1; then
@@ -623,8 +615,7 @@ DRYEOF
     if [[ -f "$install_file" ]]; then
       msg_info "Running install script: ${var_install}.sh"
       pct push "$CT_ID" "$install_file" "/tmp/${var_install}.sh"
-      # Pipe empty lines to auto-decline all interactive prompts in install scripts
-      echo -e "\n\n\n\n\n" | pct exec "$CT_ID" -- bash -c "chmod +x /tmp/${var_install}.sh && /tmp/${var_install}.sh" >>"$BUILD_LOG" 2>&1
+      pct exec "$CT_ID" -- bash -c "chmod +x /tmp/${var_install}.sh && /tmp/${var_install}.sh" >>"$BUILD_LOG" 2>&1
       msg_ok "Install script completed"
     fi
   fi

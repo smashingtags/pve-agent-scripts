@@ -9,14 +9,14 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 **What changed:**
 - `misc/agent-build.func` replaces `build.func` — zero whiptail/dialog calls
 - `pve-agent` CLI provides structured JSON output for agent consumption
-- `catalog.json` is a machine-readable index of all 466+ apps
+- `catalog.json` is a machine-readable index of all 464+ apps
 - All `install/*.sh` scripts remain **untouched** — the actual app logic works as-is
 
 **What stayed the same:**
 - All Proxmox API calls (`pct create`, `pct set`, etc.)
 - All apt/package installation logic
 - All install scripts (`install/*.sh`)
-- Upstream compatibility — can merge changes from community-scripts**Compatibility:**- 465 CT scripts — all use the same source pattern, all work with pve-agent- 391/455 install scripts fully non-interactive — work perfectly- 57 install scripts have YES/NO prompts — auto-declined (defaults to No)- 35 install scripts have version/config prompts — use defaults when available- Tested: Docker, AdGuard Home, Nginx Proxy Manager — all FULL SUCCESS on Proxmox 8
+- Upstream compatibility — can merge changes from community-scripts
 
 ## Quick Start
 
@@ -39,10 +39,11 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 # Dry run (shows what would happen)
 ./pve-agent create adguard --dry-run
 
-# JSON output mode (for agents)
+# JSON output mode (for agents) — works before or after subcommand
 ./pve-agent --json list
-./pve-agent --json info adguard
-./pve-agent --json create adguard --dry-run
+./pve-agent list --json
+./pve-agent info adguard --json
+./pve-agent create adguard --dry-run --json
 ```
 
 ## Environment Variables
@@ -68,6 +69,13 @@ Instead of interactive prompts, configure via environment:
 | `PVE_SSH` | Enable SSH (yes/no) | no |
 | `PVE_SSH_KEY` | SSH authorized key | - |
 | `PVE_GPU` | GPU passthrough (yes/no) | no |
+| `PVE_TUN` | TUN device passthrough (yes/no) | no |
+| `PVE_FUSE` | FUSE support (yes/no) | no |
+| `PVE_UNPRIVILEGED` | Container type (0=privileged, 1=unprivileged) | App default |
+| `PVE_TAGS` | Additional tags (semicolon-separated) | - |
+| `PVE_IPV6` | IPv6 method (none/auto/dhcp/static) | none |
+| `PVE_IPV6_ADDR` | IPv6 address (CIDR, for static) | - |
+| `PVE_IPV6_GW` | IPv6 gateway (for static) | - |
 | `PVE_STORAGE` | Container storage | Auto-detected |
 | `PVE_TEMPLATE_STORAGE` | Template storage | Auto-detected |
 | `PVE_JSON` | JSON output mode (1) | 0 |
@@ -112,14 +120,7 @@ This parses all `ct/*.sh` scripts and regenerates:
 
 - **[tteck](https://github.com/tteck)** (RIP) — Original creator of Proxmox VE Helper Scripts
 - **[community-scripts](https://github.com/community-scripts/ProxmoxVE)** — Community maintainers
-- **[Imogen Labs](https://agents.imogenlabs.ai)** — Agent Edition fork maintainer
-
-## Related
-
-- **[OpenClaw Agent Templates](https://agents.imogenlabs.ai/#templates)** — Pre-built AI agent configs ($19-49) for monitoring, crypto, news, security, and more
-- **[The Imogen Playbook](https://agents.imogenlabs.ai/#templates)** — How to build an AI operator from scratch ($149)
-- **[Managed OpenClaw Hosting](https://agents.imogenlabs.ai/#pricing)** — Dedicated AI agent hosting ($29-89/mo)
-- **[@imogenlabs/operator-kit](https://www.npmjs.com/package/@imogenlabs/operator-kit)** — Free OpenClaw operator scaffold (npm)
+- **Imogen Labs** — Agent Edition fork maintainer
 
 ## License
 
