@@ -296,11 +296,17 @@ base_settings() {
   VERBOSE=${var_verbose:-"${1:-no}"}
 
   PW=""
+  GENERATED_PASSWORD=""
   if [[ -n "${var_pw:-}" ]]; then
     local _pw_raw="${var_pw}"
     case "$_pw_raw" in --password\ *) _pw_raw="${_pw_raw#--password }" ;; -password\ *) _pw_raw="${_pw_raw#-password }" ;; esac
     while [[ "$_pw_raw" == -* ]]; do _pw_raw="${_pw_raw#-}"; done
     [[ -n "$_pw_raw" ]] && PW="--password $_pw_raw"
+  fi
+  if [[ -z "$PW" ]]; then
+    GENERATED_PASSWORD=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+    PW="--password $GENERATED_PASSWORD"
+    msg_info "Generated root password: $GENERATED_PASSWORD"
   fi
 
   # Container ID
@@ -494,6 +500,7 @@ build_container() {
   "unprivileged": ${CT_TYPE:-1},
   "gpu": "${ENABLE_GPU:-no}",
   "ssh": "${SSH:-no}",
+  "password": "${GENERATED_PASSWORD:-}",
   "tags": "${TAGS}"
 }
 DRYEOF
@@ -655,7 +662,8 @@ description() {
   "hostname": "${HN}",
   "cpu": ${CORE_COUNT},
   "ram_mb": ${RAM_SIZE},
-  "disk_gb": ${DISK_SIZE}
+  "disk_gb": ${DISK_SIZE},
+  "password": "${GENERATED_PASSWORD:-}"
 }
 JSONEOF
   fi
