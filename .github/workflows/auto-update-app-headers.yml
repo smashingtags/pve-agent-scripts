@@ -34,7 +34,7 @@ jobs:
 
       # Step 1: Checkout repository
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
       # Step 2: Disable file mode changes detection
       - name: Disable file mode changes
