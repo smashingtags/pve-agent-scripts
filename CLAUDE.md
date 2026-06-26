@@ -49,7 +49,7 @@ The EOS-rebranded version uses three repos:
 | Repo | Visibility | Role |
 |------|-----------|------|
 | `smashingtags/pve-agent-scripts` | Public (MIT) | Upstream sync point. Merges from community-scripts, stays PVE-native. |
-| `smashingtags/eightly-os` | Private | Has `tools/eos-agent/transform.py` — reads catalog.json from this repo, rewrites PVE commands to native LXC (`lxc-create`, `lxc-start`, `lxc-attach`), rebrands `PVE_*` env vars to `EOS_*`. |
+| `imogenlabs/eightly` | Private | Has `tools/eos-agent/transform.py` — reads catalog.json from this repo, rewrites PVE commands to native LXC (`lxc-create`, `lxc-start`, `lxc-attach`), rebrands `PVE_*` env vars to `EOS_*`. |
 | `smashingtags/eos-agent-scripts` | Private | Generated output — 509 EOS-native LXC app scripts. Don't edit directly; regenerate via transform.py. |
 
 ## Rules
