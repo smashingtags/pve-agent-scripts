@@ -66,3 +66,6 @@ json/.vscode/
 
 # Ignore repository metadata or Git itself
 .git/
+
+# Agent scratch, not part of the fork.
+.claude/
