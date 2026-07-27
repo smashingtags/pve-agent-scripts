@@ -12,6 +12,7 @@ var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -34,12 +35,11 @@ function update_script() {
     systemctl stop homelable
     msg_ok "Stopped Service"
 
-    msg_info "Backing up Configuration and Data"
-    cp /opt/homelable/backend/.env /opt/homelable.env.bak
-    cp -r /opt/homelable/data /opt/homelable_data_bak
-    msg_ok "Backed up Configuration and Data"
+    create_backup /opt/homelable/backend/.env /opt/homelable/data /opt/homelable/mcp/.env
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "homelable" "Pouzor/homelable" "tarball" "latest" "/opt/homelable"
+
+    restore_backup
 
     msg_info "Updating Python Dependencies"
     cd /opt/homelable/backend
@@ -53,12 +53,16 @@ function update_script() {
     $STD npm run build
     msg_ok "Rebuilt Frontend"
 
-    msg_info "Restoring Configuration and Data"
-    cp /opt/homelable.env.bak /opt/homelable/backend/.env
-    cp -r /opt/homelable_data_bak/. /opt/homelable/data/
-    rm -f /opt/homelable.env.bak
-    rm -rf /opt/homelable_data_bak
-    msg_ok "Restored Configuration and Data"
+    if [[ -f /opt/homelable/mcp/.env ]]; then
+      msg_info "Restoring MCP Server"
+      MCP_OWNER=$(stat -c '%U' /opt/homelable/mcp/.env)
+      cd /opt/homelable/mcp
+      $STD uv venv --clear /opt/homelable/mcp/.venv
+      $STD uv pip install --python /opt/homelable/mcp/.venv/bin/python -r requirements.txt
+      chown -R "$MCP_OWNER":"$MCP_OWNER" /opt/homelable/mcp
+      systemctl restart homelable-mcp
+      msg_ok "Restored MCP Server"
+    fi
 
     msg_info "Starting Service"
     systemctl start homelable
@@ -74,5 +78,5 @@ description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:3000${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:3000${CL}"

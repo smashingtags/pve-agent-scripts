@@ -12,6 +12,7 @@ var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-4}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-no}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -33,12 +34,11 @@ function update_script() {
     systemctl stop flatnotes
     msg_ok "Stopped Service"
 
-    msg_info "Backing up Configuration and Data"
-    cp /opt/flatnotes/.env /opt/flatnotes.env
-    cp -r /opt/flatnotes/data /opt/flatnotes_data_backup
-    msg_ok "Backed up Configuration and Data"
+    create_backup /opt/flatnotes/.env /opt/flatnotes/data
 
-    fetch_and_deploy_gh_release "flatnotes" "dullage/flatnotes" "tarball"
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "flatnotes" "dullage/flatnotes" "tarball"
+
+    restore_backup
 
     msg_info "Updating Flatnotes"
     cd /opt/flatnotes/client
@@ -46,16 +46,10 @@ function update_script() {
     $STD npm run build
     cd /opt/flatnotes
     rm -f uv.lock
+    sed -i 's/^name = ""$/name = "flatnotes"/' pyproject.toml
     $STD /usr/local/bin/uvx migrate-to-uv
     $STD /usr/local/bin/uv sync
     msg_ok "Updated Flatnotes"
-
-    msg_info "Restoring Configuration and Data"
-    cp /opt/flatnotes.env /opt/flatnotes/.env
-    cp -r /opt/flatnotes_data_backup/. /opt/flatnotes/data
-    rm -f /opt/flatnotes.env
-    rm -r /opt/flatnotes_data_backup
-    msg_ok "Restored Configuration and Data"
 
     msg_info "Starting Service"
     systemctl start flatnotes
@@ -71,6 +65,6 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:8080${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:8080${CL}"
 

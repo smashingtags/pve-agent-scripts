@@ -12,6 +12,7 @@ var_ram="${var_ram:-4096}"
 var_disk="${var_disk:-10}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -34,25 +35,29 @@ function update_script() {
     systemctl stop docuseal docuseal-sidekiq
     msg_ok "Stopped Services"
 
-    msg_info "Backing up Data"
-    cp /opt/docuseal/.env /opt/docuseal.env.bak
-    [[ -d /opt/docuseal/data ]] && mv /opt/docuseal/data /opt/docuseal_data.bak
-    msg_ok "Backed up Data"
+    ensure_dependencies libleptonica-dev libleptonica6
+
+    create_backup /opt/docuseal/.env \
+      /opt/docuseal/data
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "docuseal" "docusealco/docuseal" "tarball"
 
-    msg_info "Restoring Data"
-    mv /opt/docuseal.env.bak /opt/docuseal/.env
-    [[ -d /opt/docuseal_data.bak ]] && mv /opt/docuseal_data.bak /opt/docuseal/data
-    msg_ok "Restored Data"
+    local required_ruby current_ruby
+    required_ruby=$(grep -m1 '^ruby ' /opt/docuseal/Gemfile | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
+    current_ruby=$(PATH="/root/.rbenv/bin:/root/.rbenv/shims:${PATH}" rbenv global 2>/dev/null || true)
+    if [[ -n $required_ruby && $required_ruby != "$current_ruby" ]]; then
+      RUBY_VERSION="${required_ruby}" RUBY_INSTALL_RAILS="false" HOME=/root setup_ruby
+    fi
+
+    restore_backup
 
     msg_info "Building Application"
     cd /opt/docuseal
-    export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
+    export PATH="/root/.rbenv/bin:/root/.rbenv/shims:${PATH}"
     eval "$(rbenv init - bash)" 2>/dev/null || true
     export RAILS_ENV=production
     export NODE_ENV=production
-    export SECRET_KEY_BASE_DUMMY=1
+    mkdir -p /opt/docuseal/tmp
     set -a
     source /opt/docuseal/.env
     set +a
@@ -80,5 +85,5 @@ description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:3000${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:3000${CL}"

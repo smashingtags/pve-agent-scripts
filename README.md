@@ -9,7 +9,7 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 **What changed:**
 - `misc/agent-build.func` replaces `build.func` — zero whiptail/dialog calls
 - `pve-agent` CLI provides structured JSON output for agent consumption
-- `catalog.json` is a machine-readable index of all 509 apps
+- `catalog.json` is a machine-readable index of all 466+ apps
 - All `install/*.sh` scripts remain **untouched** — the actual app logic works as-is
 
 **What stayed the same:**
@@ -39,11 +39,10 @@ The upstream ProxmoxVE community scripts use whiptail/dialog for interactive GUI
 # Dry run (shows what would happen)
 ./pve-agent create adguard --dry-run
 
-# JSON output mode (for agents) — works before or after subcommand
+# JSON output mode (for agents)
 ./pve-agent --json list
-./pve-agent list --json
-./pve-agent info adguard --json
-./pve-agent create adguard --dry-run --json
+./pve-agent --json info adguard
+./pve-agent --json create adguard --dry-run
 ```
 
 ## Environment Variables
@@ -65,17 +64,10 @@ Instead of interactive prompts, configure via environment:
 | `PVE_VLAN` | VLAN tag | - |
 | `PVE_MTU` | MTU | - |
 | `PVE_MAC` | MAC address | - |
-| `PVE_PASSWORD` | Root password (auto-generates random 16-char if not set) | Auto |
+| `PVE_PASSWORD` | Root password | - |
 | `PVE_SSH` | Enable SSH (yes/no) | no |
 | `PVE_SSH_KEY` | SSH authorized key | - |
 | `PVE_GPU` | GPU passthrough (yes/no) | no |
-| `PVE_TUN` | TUN device passthrough (yes/no) | no |
-| `PVE_FUSE` | FUSE support (yes/no) | no |
-| `PVE_UNPRIVILEGED` | Container type (0=privileged, 1=unprivileged) | App default |
-| `PVE_TAGS` | Additional tags (semicolon-separated) | - |
-| `PVE_IPV6` | IPv6 method (none/auto/dhcp/static) | none |
-| `PVE_IPV6_ADDR` | IPv6 address (CIDR, for static) | - |
-| `PVE_IPV6_GW` | IPv6 gateway (for static) | - |
 | `PVE_STORAGE` | Container storage | Auto-detected |
 | `PVE_TEMPLATE_STORAGE` | Template storage | Auto-detected |
 | `PVE_JSON` | JSON output mode (1) | 0 |
@@ -116,13 +108,11 @@ This parses all `ct/*.sh` scripts and regenerates:
 - `misc/agent-build.func` — non-interactive build functions
 - `pve-agent` — CLI wrapper
 
-**Warning:** `convert.py` overwrites `pve-agent` and `misc/agent-build.func` on every run. Edit `tools/convert.py` if you need to change them — direct edits will be lost on next regeneration.
-
 ## Credits
 
 - **[tteck](https://github.com/tteck)** (RIP) — Original creator of Proxmox VE Helper Scripts
 - **[community-scripts](https://github.com/community-scripts/ProxmoxVE)** — Community maintainers
-- **[Eight.ly](https://eight.ly)** — Agent Edition fork maintainer
+- **Imogen Labs** — Agent Edition fork maintainer
 
 ## License
 

@@ -292,37 +292,14 @@ def cmd_catalog_stats(args, catalog):
             print(f"  {tag:<20} {count}")
 
 
-def _resolve_format(argv=None):
-    """Extract --json/--format from anywhere in argv, return (format, remaining_argv)."""
-    import shlex
-    if argv is None:
-        argv = sys.argv[1:]
-    fmt = "table"
-    remaining = []
-    skip_next = False
-    for i, arg in enumerate(argv):
-        if skip_next:
-            skip_next = False
-            continue
-        if arg == "--json":
-            fmt = "json"
-        elif arg == "--format" and i + 1 < len(argv):
-            fmt = argv[i + 1]
-            skip_next = True
-        elif arg.startswith("--format="):
-            fmt = arg.split("=", 1)[1]
-        else:
-            remaining.append(arg)
-    return fmt, remaining
-
-
 def main():
-    output_format, remaining_argv = _resolve_format()
-
     parser = argparse.ArgumentParser(
         prog="pve-agent",
         description="Proxmox VE Community Scripts — Agent Edition CLI",
     )
+    parser.add_argument("--format", choices=["json", "table"], default="table",
+                        help="Output format (default: table)")
+    parser.add_argument("--json", action="store_true", help="Shorthand for --format json")
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -369,9 +346,11 @@ def main():
     p_catalog = subparsers.add_parser("catalog", help="Show catalog statistics")
     p_catalog.set_defaults(func=cmd_catalog_stats)
 
-    args = parser.parse_args(remaining_argv)
-    args.format = output_format
-    args.json = output_format == "json"
+    args = parser.parse_args()
+
+    # Handle --json shorthand
+    if args.json:
+        args.format = "json"
 
     catalog = load_catalog()
     args.func(args, catalog)

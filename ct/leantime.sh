@@ -12,6 +12,7 @@ var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-20}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -33,20 +34,18 @@ function update_script() {
     msg_info "Creating Backup"
     mariadb-dump leantime >"/opt/leantime_db_backup_$(date +%F).sql"
     tar -czf "/opt/leantime_backup_$(date +%F).tar.gz" "/opt/leantime"
-    mv /opt/leantime /opt/leantime_bak
     msg_ok "Backup Created"
 
-    fetch_and_deploy_gh_release "leantime" "Leantime/leantime" "prebuild" "latest" "/opt/leantime" Leantime*.tar.gz
+    create_backup /opt/leantime/config/.env
 
-    msg_info "Restoring Config & Permissions"
-    mv /opt/leantime_bak/config/.env /opt/leantime/config/.env
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "leantime" "Leantime/leantime" "prebuild" "latest" "/opt/leantime" Leantime*.tar.gz
+
+    restore_backup
+
+    msg_info "Setting Permissions"
     chown -R www-data:www-data "/opt/leantime"
     chmod -R 750 "/opt/leantime"
-    msg_ok "Restored Config & Permissions"
-
-    msg_info "Removing Backup"
-    rm -rf /opt/leantime_bak
-    msg_ok "Removed Backup"
+    msg_ok "Set Permissions"
     msg_ok "Updated successfully!"
   fi
   exit
@@ -58,5 +57,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}/install${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}/install${CL}"

@@ -12,6 +12,7 @@ var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-4}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -35,12 +36,11 @@ function update_script() {
     systemctl stop tautulli
     msg_ok "Stopped Service"
 
-    msg_info "Backing up config and database"
-    cp /opt/Tautulli/config.ini /opt/tautulli_config.ini.backup
-    cp /opt/Tautulli/tautulli.db /opt/tautulli.db.backup
-    msg_ok "Backed up config and database"
+    create_backup /opt/Tautulli/config.ini /opt/Tautulli/tautulli.db
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "Tautulli" "Tautulli/Tautulli" "tarball"
+
+    restore_backup
 
     msg_info "Updating Tautulli"
     cd /opt/Tautulli
@@ -53,12 +53,6 @@ function update_script() {
     $STD uv pip install pyopenssl
     $STD uv pip install "setuptools<81"
     msg_ok "Updated Tautulli"
-
-    msg_info "Restoring config and database"
-    cp /opt/tautulli_config.ini.backup /opt/Tautulli/config.ini
-    cp /opt/tautulli.db.backup /opt/Tautulli/tautulli.db
-    rm -f /opt/{tautulli_config.ini.backup,tautulli.db.backup}
-    msg_ok "Restored config and database"
 
     msg_info "Starting Service"
     systemctl start tautulli
@@ -74,5 +68,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:8181${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:8181${CL}"

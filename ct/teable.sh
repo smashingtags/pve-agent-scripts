@@ -13,6 +13,7 @@ var_ram="${var_ram:-10240}"
 var_disk="${var_disk:-25}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -35,15 +36,11 @@ function update_script() {
     systemctl stop teable
     msg_ok "Stopped Service"
 
-    msg_info "Backing up Configuration"
-    cp /opt/teable/.env /opt/teable.env.bak
-    msg_ok "Backed up Configuration"
+    create_backup /opt/teable/.env
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "teable" "teableio/teable" "tarball"
 
-    msg_info "Restoring Configuration"
-    mv /opt/teable.env.bak /opt/teable/.env
-    msg_ok "Restored Configuration"
+    restore_backup
 
     msg_info "Rebuilding Teable"
     cd /opt/teable
@@ -78,5 +75,5 @@ description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:3000${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:3000${CL}"

@@ -11,7 +11,8 @@ var_cpu="${var_cpu:-1}"
 var_ram="${var_ram:-256}"
 var_disk="${var_disk:-1}"
 var_os="${var_os:-alpine}"
-var_version="${var_version:-3.23}"
+var_version="${var_version:-3.24}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -57,5 +58,6 @@ build_container
 description
 
 msg_ok "Completed successfully!\n"
-echo -e "${APP} should be reachable on port 6379.
-         ${BL}redis-cli -h ${IP} -p 6379${CL} \n"
+echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
+echo -e "${INFO}${YW}Connect to Redis CLI using the following command:${CL}"
+echo -e "${GATEWAY}${BGN}redis-cli -h ${IP} -p 6379${CL}"
