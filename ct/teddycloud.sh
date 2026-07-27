@@ -12,6 +12,7 @@ var_disk="${var_disk:-8}"
 var_ram="${var_ram:-1024}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-no}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "${APP}"
@@ -33,16 +34,11 @@ function update_script() {
     systemctl stop teddycloud
     msg_ok "Stopped Service"
 
-    msg_info "Creating backup"
-    mv /opt/teddycloud /opt/teddycloud_bak
-    msg_ok "Backup created"
+    create_backup /opt/teddycloud/certs /opt/teddycloud/config /opt/teddycloud/data
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "teddycloud" "toniebox-reverse-engineering/teddycloud" "prebuild" "latest" "/opt/teddycloud" "teddycloud.amd64.release*.zip"
 
-    msg_info "Restoring data"
-    cp -R /opt/teddycloud_bak/certs /opt/teddycloud_bak/config /opt/teddycloud_bak/data /opt/teddycloud
-    rm -rf /opt/teddycloud_bak
-    msg_ok "Data restored"
+    restore_backup
 
     msg_info "Starting Service"
     systemctl start teddycloud
@@ -58,5 +54,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}${CL}"

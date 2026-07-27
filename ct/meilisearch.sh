@@ -12,6 +12,7 @@ var_ram="${var_ram:-4096}"
 var_disk="${var_disk:-7}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -32,14 +33,13 @@ function update_script() {
       systemctl stop meilisearch-ui
       msg_ok "Stopped Meilisearch-UI"
 
-      cp /opt/meilisearch-ui/.env.local /tmp/.env.local.bak
-      rm -rf /opt/meilisearch-ui
-      fetch_and_deploy_gh_release "meilisearch-ui" "riccox/meilisearch-ui" "tarball"
+      create_backup /opt/meilisearch-ui/.env.local
+      CLEAN_INSTALL=1 fetch_and_deploy_gh_release "meilisearch-ui" "riccox/meilisearch-ui" "tarball"
+      restore_backup
 
       msg_info "Configuring Meilisearch-UI"
       cd /opt/meilisearch-ui
       sed -i 's|const hash = execSync("git rev-parse HEAD").toString().trim();|const hash = "unknown";|' /opt/meilisearch-ui/vite.config.ts
-      mv /tmp/.env.local.bak /opt/meilisearch-ui/.env.local
       $STD pnpm install
       msg_ok "Configured Meilisearch-UI"
 
@@ -59,5 +59,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}meilisearch: http://${IP}:7700$ | meilisearch-ui: http://${IP}:24900${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}meilisearch: http://${IP}:7700$ | meilisearch-ui: http://${IP}:24900${CL}"

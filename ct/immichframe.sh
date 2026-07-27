@@ -12,6 +12,7 @@ var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -34,9 +35,7 @@ function update_script() {
     systemctl stop immichframe
     msg_ok "Stopped Service"
 
-    msg_info "Backing up Configuration"
-    cp -r /opt/immichframe/Config /tmp/immichframe_config.bak
-    msg_ok "Backed up Configuration"
+    create_backup /opt/immichframe/Config
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "immichframe" "immichFrame/ImmichFrame" "tarball" "latest" "/tmp/immichframe"
 
@@ -44,7 +43,7 @@ function update_script() {
     cd /tmp/immichframe
     $STD dotnet publish ImmichFrame.WebApi/ImmichFrame.WebApi.csproj \
       --configuration Release \
-      --runtime linux-x64 \
+      --runtime "$(arch_resolve "linux-x64" "linux-arm64")" \
       --self-contained false \
       --output /opt/immichframe
 
@@ -56,11 +55,8 @@ function update_script() {
     rm -rf /tmp/immichframe
     msg_ok "Setup ImmichFrame"
 
-    msg_info "Restoring Configuration"
-    cp -r /tmp/immichframe_config.bak/* /opt/immichframe/Config/
-    rm -rf /tmp/immichframe_config.bak
+    restore_backup
     chown -R immichframe:immichframe /opt/immichframe
-    msg_ok "Restored Configuration"
 
 
     msg_info "Starting Service"
@@ -77,5 +73,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:8080${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:8080${CL}"

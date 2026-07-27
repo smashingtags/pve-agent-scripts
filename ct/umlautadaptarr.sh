@@ -12,6 +12,7 @@ var_ram="${var_ram:-512}"
 var_disk="${var_disk:-4}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-no}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -33,9 +34,9 @@ function update_script() {
     systemctl stop umlautadaptarr
     msg_ok "Stopped Service"
 
-    cp /opt/UmlautAdaptarr/appsettings.json /opt/UmlautAdaptarr/appsettings.json.bak
+    create_backup /opt/UmlautAdaptarr/appsettings.json
     fetch_and_deploy_gh_release "UmlautAdaptarr" "PCJones/Umlautadaptarr" "prebuild" "latest" "/opt/UmlautAdaptarr" "linux-x64.zip"
-    cp /opt/UmlautAdaptarr/appsettings.json.bak /opt/UmlautAdaptarr/appsettings.json
+    restore_backup
 
     msg_info "Starting Service"
     systemctl start umlautadaptarr
@@ -50,5 +51,5 @@ description
 
 msg_ok "Completed successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:5005${CL}"
+echo -e "${INFO}${YW}Access it using the following URL:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:5005${CL}"

@@ -12,6 +12,7 @@ var_ram="${var_ram:-512}"
 var_disk="${var_disk:-4}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -34,17 +35,12 @@ function update_script() {
     systemctl stop nginx
     msg_ok "Stopped Service"
 
-    msg_info "Backing up Configuration"
-    cp -r /opt/yourls/user /opt/yourls_user.bak
-    msg_ok "Backed up Configuration"
+    create_backup /opt/yourls/user
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "yourls" "YOURLS/YOURLS" "tarball"
-    chown -R www-data:www-data /opt/yourls
 
-    msg_info "Restoring Configuration"
-    cp -r /opt/yourls_user.bak/. /opt/yourls/user/
-    rm -rf /opt/yourls_user.bak
-    msg_ok "Restored Configuration"
+    restore_backup
+    chown -R www-data:www-data /opt/yourls
 
     msg_info "Starting Service"
     systemctl start nginx
@@ -61,6 +57,6 @@ description
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
 echo -e "${INFO}${YW} First, complete the database setup at:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}/admin/install.php${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}/admin/install.php${CL}"
 echo -e "${INFO}${YW} Admin credentials are in the install log:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}grep -A2 'admin' /opt/yourls/user/config.php${CL}"
+echo -e "${GATEWAY}${BGN}grep -A2 'admin' /opt/yourls/user/config.php${CL}"

@@ -12,6 +12,7 @@ var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -29,7 +30,8 @@ function update_script() {
     exit
   fi
 
-  if check_for_gh_release "ironclaw-bin" "nearai/ironclaw"; then
+  RELEASE="ironclaw-v0.29.1"
+  if check_for_gh_release "ironclaw-bin" "nearai/ironclaw" "${RELEASE}" "IronClaw 1.0 (Reborn) is a ground-up rearchitecture with an incompatible CLI/config format; pinned until this script supports it"; then
     msg_info "Stopping Service"
     systemctl stop ironclaw
     msg_ok "Stopped Service"
@@ -38,8 +40,8 @@ function update_script() {
     cp /root/.ironclaw/.env /root/ironclaw.env.bak
     msg_ok "Backed up Configuration"
 
-    fetch_and_deploy_gh_release "ironclaw-bin" "nearai/ironclaw" "prebuild" "latest" "/usr/local/bin" \
-      "ironclaw-$(uname -m)-unknown-linux-$([[ -f /etc/alpine-release ]] && echo "musl" || echo "gnu").tar.gz"
+    fetch_and_deploy_gh_release "ironclaw-bin" "nearai/ironclaw" "prebuild" "${RELEASE}" "/usr/local/bin" \
+      "ironclaw-$(uname -m)-unknown-linux-gnu.tar.gz"
     chmod +x /usr/local/bin/ironclaw
 
     msg_info "Restoring Configuration"
@@ -61,11 +63,12 @@ description
 
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
-echo -e "${INFO}${YW} Complete setup by running:${CL}"
-echo -e "${TAB}${BGN}ironclaw onboard${CL}"
-echo -e "${INFO}${YW} Then start the service:${CL}"
-echo -e "${TAB}${BGN}systemctl start ironclaw${CL}"
-echo -e "${INFO}${YW} Access the Web UI at:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:3000${CL}"
-echo -e "${INFO}${YW} Auth token and database credentials:${CL}"
-echo -e "${TAB}${BGN}cat /root/.ironclaw/.env${CL}"
+echo -e "${INFO}${YW} Next Steps:${CL}"
+echo -e "${TAB}1. Configure remaining settings:${CL}"
+echo -e "${TAB}${TAB}${BGN}/usr/local/bin/ironclaw onboard${CL}"
+echo -e "${TAB}2. Start the service:${CL}"
+echo -e "${TAB}${TAB}${BGN}systemctl start ironclaw${CL}"
+echo -e "${TAB}3. Access the Web UI at:${CL}"
+echo -e "${GATEWAY}${BGN}http://${IP}:3000${CL}"
+echo -e "${INFO}${YW} Use Gateway Authentication Token to login:${CL}"
+echo -e "${TAB}${TAB}${BGN}cat /root/.ironclaw/gateway.creds${CL}"
